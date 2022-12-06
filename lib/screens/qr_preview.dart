@@ -7,6 +7,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:qreate/other/Behaviors.dart';
+import 'package:qreate/screens/login.dart';
+import 'package:qreate/screens/register.dart';
 import 'package:widgets_to_image/widgets_to_image.dart';
 import "package:flutter_colorpicker/flutter_colorpicker.dart";
 import "package:share_plus/share_plus.dart";
@@ -35,7 +37,7 @@ class _QRPreviewState extends State<QRPreview> {
     final uri = Uri.parse(widget.value);
     Image? image;
 
-    switch(uri.host){
+    switch (uri.host) {
       case "www.discord.com":
         image = Image.asset("assets/images/discord.png");
         break;
@@ -75,7 +77,11 @@ class _QRPreviewState extends State<QRPreview> {
       data: widget.value,
       version: QrVersions.auto,
       size: 250.0,
-      embeddedImage: useImage ? embeddedImage != null ? embeddedImage!.image : null : null ,
+      embeddedImage: useImage
+          ? embeddedImage != null
+              ? embeddedImage!.image
+              : null
+          : null,
       backgroundColor: bgColor,
       foregroundColor: fgColor,
     );
@@ -103,53 +109,114 @@ class _QRPreviewState extends State<QRPreview> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            titlePadding: const EdgeInsets.all(0),
-            contentPadding: const EdgeInsets.all(0),
-            content: SizedBox(height: 475, child: ColorPicker(
-              pickerColor: fgColor,
-              onColorChanged: (color) => {
-                setState(() => {fgColor = color})
-              },
-            ),)
-          );
+              titlePadding: const EdgeInsets.all(0),
+              contentPadding: const EdgeInsets.all(0),
+              content: SizedBox(
+                height: 475,
+                child: ColorPicker(
+                  pickerColor: fgColor,
+                  onColorChanged: (color) => {
+                    setState(() => {fgColor = color})
+                  },
+                ),
+              ));
         },
       );
     }
 
-
     void share() async {
       final data = await qrController.capture();
-      if(data != null) {
-        if(Platform.isIOS){
-          if(await Permission.photos.request().isGranted){
+      if (data != null) {
+        if (Platform.isIOS) {
+          if (await Permission.photos.request().isGranted) {
             print("GRANTED");
             final docs = await getApplicationDocumentsDirectory();
             final codesDir = Directory("${docs.path}/codes");
             final dirExists = await codesDir.exists();
-            if(!dirExists){
+            if (!dirExists) {
               await codesDir.create(recursive: true);
             }
-            File image = await File("${codesDir.path}/qr.png").writeAsBytes(List<int>.from(data!));
-            Share.shareXFiles([XFile(image.path)], text: textEditingController.text);
+            File image = await File("${codesDir.path}/qr.png")
+                .writeAsBytes(List<int>.from(data!));
+            Share.shareXFiles([XFile(image.path)],
+                text: textEditingController.text);
           }
-        }
-        else if(await Permission.storage.request().isGranted) {
+        } else if (await Permission.storage.request().isGranted) {
           final docs = await getApplicationDocumentsDirectory();
           final codesDir = Directory("${docs.path}/codes");
           final dirExists = await codesDir.exists();
-          if(!dirExists){
+          if (!dirExists) {
             await codesDir.create(recursive: true);
           }
-          File image = await File("${codesDir.path}/qr.png").writeAsBytes(List<int>.from(data!));
-          Share.shareXFiles([XFile(image.path)], text: textEditingController.text);
+          File image = await File("${codesDir.path}/qr.png")
+              .writeAsBytes(List<int>.from(data!));
+          Share.shareXFiles([XFile(image.path)],
+              text: textEditingController.text);
         }
       }
     }
 
-    void save() async {}
+    void save() async {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              titlePadding: const EdgeInsets.all(0),
+              contentPadding: const EdgeInsets.all(0),
+              content: Container(
+                height: 300,
+                padding: EdgeInsets.symmetric(horizontal: 25),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(margin: EdgeInsets.only(bottom: 15), child: Text("You must be signed in to save QR codes.", style: TextStyle(fontSize: 18), textAlign: TextAlign.left,)),
+                      ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (t) => Login()));
+                          },
+                          style: ElevatedButton.styleFrom(
+                              minimumSize: Size(150, 50),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25))),
+                          child: Text(
+                            "Login",
+                            style: TextStyle(fontSize: 24),
+                          )),
+                      Container(
+                        height: 25,
+                      ),
+                      ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (t) => Register()));
+                          },
+                          style: ElevatedButton.styleFrom(
+                              minimumSize: Size(150, 50),
+                              backgroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25),
+                                  side: BorderSide(
+                                      width: 2,
+                                      color: Theme.of(context).primaryColor))),
+                          child: Text(
+                            "Register",
+                            style: TextStyle(
+                                fontSize: 24,
+                                color: Theme.of(context).primaryColor),
+                          ))
+                    ],
+                  ),
+                ),
+              ));
+        },
+      );
+    }
 
     Widget buildImage(Uint8List bytes) => Image.memory(bytes);
-
 
     return Scaffold(
       // key: qrController.containerKey,
@@ -245,15 +312,13 @@ class _QRPreviewState extends State<QRPreview> {
                       margin: const EdgeInsets.symmetric(
                           vertical: 25, horizontal: 10),
                       child: ElevatedButton(
-                          onPressed: share,
-                          child: const Text("Share"))),
+                          onPressed: share, child: const Text("Share"))),
                   Container(
                       width: 125,
                       margin: const EdgeInsets.symmetric(
                           vertical: 25, horizontal: 10),
                       child: ElevatedButton(
-                          onPressed: save,
-                          child: const Text("Save"))),
+                          onPressed: save, child: const Text("Save"))),
                 ])
               ]),
             ),
