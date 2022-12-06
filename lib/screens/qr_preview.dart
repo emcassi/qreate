@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:community_material_icon/community_material_icon.dart';
 import "package:flutter/material.dart";
+import 'package:gallery_saver/gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -26,13 +27,46 @@ class _QRPreviewState extends State<QRPreview> {
   Color fgColor = Colors.black;
 
   bool useImage = true;
+  Image? embeddedImage;
 
   TextEditingController textEditingController = TextEditingController();
 
   void setEmbeddedImage() {
     final uri = Uri.parse(widget.value);
+    Image? image;
 
-    print(uri.host);
+    switch(uri.host){
+      case "www.discord.com":
+        image = Image.asset("assets/images/discord.png");
+        break;
+      case "www.facebook.com":
+        image = Image.asset("assets/images/facebook.png");
+        break;
+      case "www.instagram.com":
+        image = Image.asset("assets/images/instagram.png");
+        break;
+      case "www.twitter.com":
+        image = Image.asset("assets/images/twitter.png");
+        break;
+      case "www.wechat.com":
+        image = Image.asset("assets/images/wechat.png");
+        break;
+      case "www.youtube.com":
+        print("YOUTUBE");
+        image = Image.asset("assets/images/youtube.png");
+        break;
+    }
+
+    setState(() {
+      embeddedImage = image;
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    setEmbeddedImage();
   }
 
   @override
@@ -41,11 +75,9 @@ class _QRPreviewState extends State<QRPreview> {
       data: widget.value,
       version: QrVersions.auto,
       size: 250.0,
+      embeddedImage: useImage ? embeddedImage != null ? embeddedImage!.image : null : null ,
       backgroundColor: bgColor,
       foregroundColor: fgColor,
-      embeddedImage:
-          useImage ? Image.asset("assets/images/instagram.png").image : null,
-      embeddedImageStyle: QrEmbeddedImageStyle(size: const Size.square(64)),
     );
 
     void showBGPicker() {
@@ -73,12 +105,12 @@ class _QRPreviewState extends State<QRPreview> {
           return AlertDialog(
             titlePadding: const EdgeInsets.all(0),
             contentPadding: const EdgeInsets.all(0),
-            content: ColorPicker(
+            content: SizedBox(height: 475, child: ColorPicker(
               pickerColor: fgColor,
               onColorChanged: (color) => {
                 setState(() => {fgColor = color})
               },
-            ),
+            ),)
           );
         },
       );
@@ -88,7 +120,20 @@ class _QRPreviewState extends State<QRPreview> {
     void share() async {
       final data = await qrController.capture();
       if(data != null) {
-        if(await Permission.storage.request().isGranted) {
+        if(Platform.isIOS){
+          if(await Permission.photos.request().isGranted){
+            print("GRANTED");
+            final docs = await getApplicationDocumentsDirectory();
+            final codesDir = Directory("${docs.path}/codes");
+            final dirExists = await codesDir.exists();
+            if(!dirExists){
+              await codesDir.create(recursive: true);
+            }
+            File image = await File("${codesDir.path}/qr.png").writeAsBytes(List<int>.from(data!));
+            Share.shareXFiles([XFile(image.path)], text: textEditingController.text);
+          }
+        }
+        else if(await Permission.storage.request().isGranted) {
           final docs = await getApplicationDocumentsDirectory();
           final codesDir = Directory("${docs.path}/codes");
           final dirExists = await codesDir.exists();
@@ -105,7 +150,6 @@ class _QRPreviewState extends State<QRPreview> {
 
     Widget buildImage(Uint8List bytes) => Image.memory(bytes);
 
-    setEmbeddedImage();
 
     return Scaffold(
       // key: qrController.containerKey,
@@ -202,16 +246,14 @@ class _QRPreviewState extends State<QRPreview> {
                           vertical: 25, horizontal: 10),
                       child: ElevatedButton(
                           onPressed: share,
-                          child: Icon(Platform.isMacOS || Platform.isIOS
-                              ? CommunityMaterialIcons.export_variant
-                              : CommunityMaterialIcons.share))),
+                          child: const Text("Share"))),
                   Container(
                       width: 125,
                       margin: const EdgeInsets.symmetric(
                           vertical: 25, horizontal: 10),
                       child: ElevatedButton(
                           onPressed: save,
-                          child: const Text("Save to Profile"))),
+                          child: const Text("Save"))),
                 ])
               ]),
             ),
