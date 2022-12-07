@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import "package:flutter/material.dart";
 import 'package:qreate/components/hr.dart';
+import 'package:qreate/screens/login.dart';
 import "package:sign_in_button/sign_in_button.dart";
 import "package:firebase_auth/firebase_auth.dart";
 
@@ -74,7 +75,7 @@ class _RegisterState extends State<Register> {
         },
         child: Scaffold(
           appBar: AppBar(
-            title: Text("Login"),
+            title: Text("Register"),
             centerTitle: true,
           ),
           body: SingleChildScrollView(
@@ -126,8 +127,10 @@ class _RegisterState extends State<Register> {
                     ElevatedButton(
                         onPressed: signInWithEmail, child: Text("Login")),
                     TextButton(
-                        onPressed: () {},
-                        child: Text("Need an account? Sign Up"))
+                        onPressed: () {
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (t) => Login()));
+                        },
+                        child: Text("Already have an account? Sign in"))
                   ]),
                 ),
                 Container(

@@ -1,5 +1,7 @@
 import "package:flutter/material.dart";
+import 'package:qreate/components/ErrorDialog.dart';
 import 'package:qreate/components/hr.dart';
+import 'package:qreate/screens/register.dart';
 import "package:sign_in_button/sign_in_button.dart";
 import "package:firebase_auth/firebase_auth.dart";
 
@@ -22,53 +24,41 @@ class _LoginState extends State<Login> {
   String emailErrorMessage = "";
   String passwordErrorMessage = "";
 
-  void signInWithEmail() async {
-
-    final bool emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(emailController.text);
-    final bool passwordValid = RegExp(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$").hasMatch(passwordController.text);
-
-    // if(emailController.text.isEmpty){
-    //   emailErrorMessage = "Please enter your email";
-    //   emailError = true;
-    // } else if(!emailValid){
-    //   emailErrorMessage = "Please enter a valid email";
-    //   emailError = true;
-    // } else if(emailValid){
-    //   emailErrorMessage = "";
-    //   emailError = false;
-    // }
-    //
-    // if(passwordController.text.isEmpty){
-    //   passwordErrorMessage = "Please enter your password";
-    //   passwordError = true;
-    // } else if(!emailValid){
-    //   passwordErrorMessage = "Your password is ";
-    //   passwordError = true;
-    // } else if(emailValid){
-    //   passwordErrorMessage = "";
-    //   passwordError = false;
-    // }
-
-    final isValid = _form.currentState!.validate();
-    if(isValid) {
-      try {
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
-            email: emailController.text, password: passwordController.text);
-      } catch (e) {
-        print(e.toString());
-      }
-    }
-    setState(() {
-      print("SDFPSDJF");
-    });
-  }
-
-  void signInWithApple(){}
-
-  void signInWithGoogle(){}
-
   @override
   Widget build(BuildContext context) {
+
+    void signInWithEmail() async {
+
+      final isValid = _form.currentState!.validate();
+      if(isValid) {
+        try {
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+              email: emailController.text, password: passwordController.text);
+        } on FirebaseAuthException catch (e) {
+          print(e.code);
+          switch(e.code){
+            case "user-not-found":
+              setState(() {
+                ErrorDialog errorDialog = const ErrorDialog(errorMessage: "There is no user corresponding to this email. Please create an account.");
+                showDialog(context: context, builder: (context) => errorDialog);
+              });
+              break;
+              case "wrong-password":
+              setState(() {
+                ErrorDialog errorDialog = const ErrorDialog(errorMessage: "Incorrect email or password. Please check and try again");
+                showDialog(context: context, builder: (context) => errorDialog);
+              });
+              break;
+          }
+        }
+      }
+      setState(() {});
+    }
+
+    void signInWithApple(){}
+
+    void signInWithGoogle(){}
+
     return GestureDetector(
       onTap: (){
         FocusScopeNode currentFocus = FocusScope.of(context);
@@ -98,7 +88,7 @@ class _LoginState extends State<Login> {
                 decoration: InputDecoration(hintText: "Email"),
                 controller: emailController,
                 validator: (text) {
-                  if(text != null){
+                  if(text == null || text == ""){
                     return "Please enter your email";
                   } else {
                     return null;
@@ -109,7 +99,7 @@ class _LoginState extends State<Login> {
                 decoration: InputDecoration(hintText: "Password"),
                 controller: passwordController,
                 validator: (text){
-                  if(text != null){
+                  if(text == null || text == ""){
                     return "Please enter your password";
                   } else {
                     return null;
@@ -118,7 +108,9 @@ class _LoginState extends State<Login> {
               ),
               ElevatedButton(onPressed: signInWithEmail, child: Text("Login")),
               TextButton(
-                  onPressed: () {}, child: Text("Need an account? Sign Up"))
+                  onPressed: () {
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (t) => Register()));
+                  }, child: Text("Need an account? Sign Up"))
             ]),),
             Container(
                 margin: EdgeInsets.symmetric(vertical: 25),
