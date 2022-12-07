@@ -1,5 +1,7 @@
 import 'package:community_material_icon/community_material_icon.dart';
+import 'package:enough_icalendar/enough_icalendar.dart';
 import "package:flutter/material.dart";
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:mailto/mailto.dart';
 import 'package:qreate/screens/qr_preview.dart';
@@ -14,6 +16,10 @@ class CreateEvent extends StatefulWidget {
 class _CreateEventState extends State<CreateEvent> {
   final _form = GlobalKey<FormState>();
   final TextEditingController nameController = TextEditingController();
+  final TextEditingController urlController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController detailsController = TextEditingController();
 
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now();
@@ -50,12 +56,23 @@ class _CreateEventState extends State<CreateEvent> {
       if (_form.currentState != null) {
         bool isValid = _form.currentState!.validate();
         if (isValid) {
-          String qrData = "";
+
+          final invite = VCalendar.createEvent(
+            organizerEmail: emailController.text,
+            start: startDate,
+            end: endDate,
+            location: addressController.text,
+            url: Uri.parse(urlController.text),
+            summary: nameController.text,
+            description: detailsController.text,
+            productId: 'enough_icalendar/v1',
+          );
+
           Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (s) => QRPreview(
-                        value: qrData,
+                        value: invite.toString(),
                         type: "event",
                       )));
         }
@@ -72,7 +89,7 @@ class _CreateEventState extends State<CreateEvent> {
         }
       },
       child: Scaffold(
-        appBar: AppBar( calk
+        appBar: AppBar(
           title: const Text("Create Event QR"),
           centerTitle: true,
         ),
@@ -116,7 +133,7 @@ class _CreateEventState extends State<CreateEvent> {
                         Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("Start Date "),
+                              const Text("Start Date "),
                               TextButton(
                                   onPressed: () {
                                     selectStartDate(context);
@@ -127,7 +144,22 @@ class _CreateEventState extends State<CreateEvent> {
                         Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("End Date "),
+                              const Text("Start Time "),
+                              TextButton(
+                                  onPressed: () {
+                                    DatePicker.showTime12hPicker(context, showTitleActions: true, currentTime: startDate, onChanged: (date) {
+                                      setState(() {
+                                        startDate = date;
+                                      });
+                                    });
+                                  },
+                                  child: Text(
+                                      DateFormat.jm().format(startDate))),
+                            ]),
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text("End Date "),
                               TextButton(
                                   onPressed: () {
                                     selectEndDate(context);
@@ -135,10 +167,101 @@ class _CreateEventState extends State<CreateEvent> {
                                   child: Text(
                                       DateFormat.yMMMEd().format(endDate))),
                             ]),
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text("End Time"),
+                              TextButton(
+                                  onPressed: () {
+                                    DatePicker.showTime12hPicker(context, showTitleActions: true, currentTime: endDate, onChanged: (date) {
+                                      setState(() {
+                                        endDate = date;
+                                      });
+                                    });
+                                  },
+                                  child: Text(
+                                      DateFormat.jm().format(endDate))),
+                            ]),
+                          Container(margin: EdgeInsets.symmetric(vertical: 15),child: TextFormField(
+                            controller: urlController,
+                            keyboardType: TextInputType.url,
+                            textInputAction: TextInputAction.next,
+                            validator: (text){
+                              if(text != null){
+                                if(Uri.tryParse(text) == null){
+                                  return "Invalid URL";
+                                }
+                              }
+                              return null;
+                            },
+                            decoration: InputDecoration(
+                                hintText: "URL",
+                                suffixIcon: IconButton(
+                                    onPressed: () =>
+                                    {urlController.text = ""},
+                                    icon: const Icon(
+                                      CommunityMaterialIcons.close_circle,
+                                      color: Colors.grey,
+                                      size: 16,
+                                    ))))),
+            Container(margin: EdgeInsets.symmetric(vertical: 15),child: TextFormField(
+                            controller: addressController,
+                            keyboardType: TextInputType.streetAddress,
+                            textInputAction: TextInputAction.next,
+                            decoration: InputDecoration(
+                                hintText: "Address",
+                                suffixIcon: IconButton(
+                                    onPressed: () =>
+                                    {addressController.text = ""},
+                                    icon: const Icon(
+                                      CommunityMaterialIcons.close_circle,
+                                      color: Colors.grey,
+                                      size: 16,
+                                    ))))),
+            Container(margin: EdgeInsets.symmetric(vertical: 15),child: TextFormField(
+                            controller: emailController,
+                            keyboardType: TextInputType.emailAddress,
+                            textInputAction: TextInputAction.next,
+                            validator: (text) {
+                              if (text != null) {
+                                if (text.isEmpty) {
+                                  return "Title required";
+                                }
+                              }
+
+                              return null;
+                            },
+                            decoration: InputDecoration(
+                                hintText: "Email",
+                                suffixIcon: IconButton(
+                                    onPressed: () =>
+                                    {emailController.text = ""},
+                                    icon: const Icon(
+                                      CommunityMaterialIcons.close_circle,
+                                      color: Colors.grey,
+                                      size: 16,
+                                    ))))),
+                        TextFormField(
+                            controller: detailsController,
+                            keyboardType: TextInputType.multiline,
+                            textInputAction: TextInputAction.newline,
+                            maxLines: 8,
+                            decoration: InputDecoration(
+                              hintText: "Details",
+                              border: const OutlineInputBorder(
+                                borderSide:
+                                BorderSide(width: 1, color: Colors.grey),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      width: 2,
+                                      color: Theme.of(context).primaryColor)),
+                            )),
                       ],
+
                     ))),
-            ElevatedButton(
-                onPressed: createQR, child: const Text("Create QR Code"))
+            Container(margin: EdgeInsets.only(bottom: 75),child: ElevatedButton(
+                onPressed: createQR, child: const Text("Create QR Code")))
           ],
         )),
       ),

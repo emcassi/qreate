@@ -234,10 +234,13 @@ class _QRPreviewState extends State<QRPreview> {
                     "name": textEditingController.text,
                     "type": widget.type,
                     "value": widget.value,
-                    "imageURL": downloadURL
+                    "imageURL": downloadURL,
+                    "timestamp": Timestamp.now(),
                   }).then((doc) {
-                    Navigator.pop(context);
-                    Navigator.pop(context);
+                    doc.update({"id": doc.id}).then((value){
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    });
                   });
                 });
               } on FirebaseException catch (e) {
@@ -289,6 +292,7 @@ class _QRPreviewState extends State<QRPreview> {
                     child: Form(
                         key: _form,
                         child: TextFormField(
+                          maxLength: 32,
                           validator: (text) {
                             if (text != null) {
                               if (text.isEmpty) {

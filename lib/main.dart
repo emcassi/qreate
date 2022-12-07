@@ -1,9 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:community_material_icon/community_material_icon.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:qreate/components/code_item.dart';
 import 'package:qreate/components/create_new.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:qreate/models/qr_code.dart';
 import 'package:qreate/screens/login.dart';
 import 'package:qreate/screens/register.dart';
+import 'package:qreate/screens/settings.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -12,14 +17,25 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
+final RouteObserver<MaterialPageRoute> routeObserver =
+    RouteObserver<MaterialPageRoute>();
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
+  void connectToFirebase() async {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  }
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    connectToFirebase();
     return MaterialApp(
       title: 'Qreate',
+      navigatorObservers: [routeObserver],
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
       ),
@@ -37,28 +53,92 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  List<String> codes = ["asdf", "asdf", "adsf"];
+class _MyHomePageState extends State<MyHomePage> with RouteAware {
+  List<QRCode> codes = [];
 
-  void connectToFirebase() async {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+  Future<List?> getCodes() async {
+    List<QRCode> temp = [];
+    var getDocs = FirebaseFirestore.instance
+        .collection("codes")
+        .where("user", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        .orderBy("timestamp", descending: true)
+        .get();
+    await getDocs.then((snapshot) {
+      for (var doc in snapshot.docs) {
+        Map<String, dynamic> data = doc.data();
+        temp.add(QRCode(data["name"], data["type"], data["user"], data["value"],
+            data["imageURL"]));
+      }
+      setState(() {
+        codes = temp;
+      });
+    });
+    return codes;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      getCodes();
+      routeObserver.subscribe(
+          this, ModalRoute.of(context) as MaterialPageRoute);
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    routeObserver.subscribe(this, ModalRoute.of(context) as MaterialPageRoute);
+    super.didChangeDependencies();
+  }
+
+  @override
+  void didPush() {
+    print("PUSHED");
+    super.didPush();
+  }
+
+  @override
+  void didPop() {
+    print("POPPED");
+    super.didPop();
+  }
+
+  @override
+  void didPopNext() {
+    print("SDF:LKSDJF");
+    getCodes();
+    super.didPopNext();
   }
 
   @override
   Widget build(BuildContext context) {
-    connectToFirebase();
-
     return Scaffold(
         appBar: AppBar(
           title: Text(widget.title),
           centerTitle: true,
+          leading: IconButton(
+            icon: const Icon(CommunityMaterialIcons.cog),
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const SettingsScreen()));
+            },
+          ),
         ),
         body: SingleChildScrollView(
           child: Column(
             children: [
-              Container(margin: EdgeInsets.only(top: 15), child: Text("Create new QR code", style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Color.fromARGB(255, 68, 93, 133)),)),
+              Container(
+                  margin: const EdgeInsets.only(top: 15),
+                  child: const Text(
+                    "Create new QR code",
+                    style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w600,
+                        color: Color.fromARGB(255, 68, 93, 133)),
+                  )),
               SizedBox(
                 height: 250,
                 width: MediaQuery.of(context).size.width,
@@ -70,52 +150,108 @@ class _MyHomePageState extends State<MyHomePage> {
               FirebaseAuth.instance.currentUser != null
                   ? ListView(
                       shrinkWrap: true,
-                      children: codes.map((e) => const Text("Test")).toList(),
+                      physics: const NeverScrollableScrollPhysics(),
+                      scrollDirection: Axis.vertical,
+                      children:
+                          codes.map((code) => CodeItem(code: code)).toList(),
                     )
-                  : Container(
+                  : SizedBox(
                       height: MediaQuery.of(context).size.height - 400,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Container(margin: EdgeInsets.only(bottom: 25), child: Text("To save QR codes", style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Color.fromARGB(255, 68, 93, 133)),)),
-
-                          Column(
-                              children: [
-                          ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (t) => Login()));
-                              },
-                              style: ElevatedButton.styleFrom(
-                                minimumSize: Size(150, 50),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(25)
-                                )
-                              ),
-                              child: Text(
-                                "Login",
-                                style: TextStyle(fontSize: 24),
+                          Container(
+                              margin: const EdgeInsets.only(bottom: 25),
+                              child: const Text(
+                                "To save QR codes",
+                                style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color.fromARGB(255, 68, 93, 133)),
                               )),
-                          Container(height: 25,),
-                          ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (t) => Register()));
-                              },
-                              style: ElevatedButton.styleFrom(
-                                minimumSize: Size(150, 50),
-                                backgroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(25),
-                                  side: BorderSide(width: 2, color: Theme.of(context).primaryColor)
-                                )
-                              ),
-                              child: Text(
-                                "Register",
-                                style: TextStyle(fontSize: 24, color: Theme.of(context).primaryColor),
-                              )),])
+                          Column(children: [
+                            ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (t) => const Login()));
+                                },
+                                style: ElevatedButton.styleFrom(
+                                    minimumSize: const Size(150, 50),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(25))),
+                                child: const Text(
+                                  "Login",
+                                  style: TextStyle(fontSize: 24),
+                                )),
+                            Container(
+                              height: 25,
+                            ),
+                            ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (t) => const Register()));
+                                },
+                                style: ElevatedButton.styleFrom(
+                                    minimumSize: const Size(150, 50),
+                                    backgroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(25),
+                                        side: BorderSide(
+                                            width: 2,
+                                            color: Theme.of(context)
+                                                .primaryColor))),
+                                child: Text(
+                                  "Register",
+                                  style: TextStyle(
+                                      fontSize: 24,
+                                      color: Theme.of(context).primaryColor),
+                                )),
+                          ])
                         ],
                       )),
             ],
           ),
         ));
+  }
+}
+
+abstract class RouteAwareState<T extends StatefulWidget> extends State<T>
+    with RouteAware {
+  @override
+  void didChangeDependencies() {
+    routeObserver.subscribe(this, ModalRoute.of(context) as MaterialPageRoute);
+    super.didChangeDependencies();
+  }
+
+  @override
+  void didPush() {
+    print('didPush $widget');
+  }
+
+  @override
+  void didPopNext() {
+    print('didPopNext $widget');
+  }
+
+  @override
+  void didPop() {
+    print('didPop $widget');
+  }
+
+  @override
+  void didPushNext() {
+    print('didPushNext $widget');
+  }
+
+  @override
+  void dispose() {
+    print("dispose $widget");
+    routeObserver.unsubscribe(this);
+    super.dispose();
   }
 }

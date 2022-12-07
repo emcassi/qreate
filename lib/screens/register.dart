@@ -36,7 +36,7 @@ class _RegisterState extends State<Register> {
   }
 
 
-  void signInWithEmail() async {
+  void createUserWithEmail() async {
 
     final isValid = _form.currentState!.validate();
     if (isValid) {
@@ -50,7 +50,7 @@ class _RegisterState extends State<Register> {
               return AlertDialog(
                   titlePadding: const EdgeInsets.all(0),
                   contentPadding: const EdgeInsets.all(0),
-                  title: Text("Error"),
+                  title: const Text("Error"),
                   content: Text(error.toString())
               );
             },
@@ -63,7 +63,7 @@ class _RegisterState extends State<Register> {
           return AlertDialog(
               titlePadding: const EdgeInsets.all(0),
               contentPadding: const EdgeInsets.all(0),
-              title: Text("Error"),
+              title: const Text("Error"),
               content: Text(e.toString())
           );
         });
@@ -73,9 +73,9 @@ class _RegisterState extends State<Register> {
     hideKeyboard();
   }
 
-  void signInWithApple() {}
+  void createUserWithApple() {}
 
-  void signInWithGoogle() {}
+  void createUserWithGoogle() {}
 
   @override
   Widget build(BuildContext context) {
@@ -141,7 +141,7 @@ class _RegisterState extends State<Register> {
                       },
                     ),
                     ElevatedButton(
-                        onPressed: signInWithEmail, child: Text("Login")),
+                        onPressed: createUserWithEmail, child: Text("Login")),
                     TextButton(
                         onPressed: () {
                           Navigator.pushReplacement(context, MaterialPageRoute(builder: (t) => Login()));
