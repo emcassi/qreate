@@ -24,7 +24,8 @@ class QRPreview extends StatefulWidget {
   final String value;
   final String type;
   final Image? image;
-  const QRPreview({super.key, required this.value, required this.type, this.image});
+  const QRPreview(
+      {super.key, required this.value, required this.type, this.image});
 
   @override
   State<QRPreview> createState() => _QRPreviewState();
@@ -213,29 +214,34 @@ class _QRPreviewState extends State<QRPreview> {
         bool isValid = _form.currentState!.validate();
         if (isValid) {
           File? imageFile = await qrToFile();
+          print("MAYBE");
           if (imageFile != null) {
             final Reference storageRef = FirebaseStorage.instance.ref("codes");
             final String codeId = Uuid().v4();
             final Reference newCodeRef = storageRef.child(codeId);
-            try {
-              await newCodeRef.putFile(imageFile).then((snapshot) {
-                FirebaseFirestore.instance.collection("codes").add({
-                  "user": FirebaseAuth.instance.currentUser!.uid,
-                  "name": textEditingController.text,
-                  "type": widget.type,
-                  "value": widget.value,
-                  "imageURL": snapshot.ref.getDownloadURL()
-                }).then((doc) {
-                  Navigator.pop(context);
-                });
+            print("GOGSODG");
+            newCodeRef.putFile(imageFile).then((p0) async {
+              print("IMage put");
+              String downloadURL = await newCodeRef.getDownloadURL();
+              print("Url got");
+
+              FirebaseFirestore.instance.collection("codes").add({
+                "user": FirebaseAuth.instance.currentUser!.uid,
+                "name": textEditingController.text,
+                "type": widget.type,
+                "value": widget.value,
+                "imageURL": downloadURL
+              }).then((ref) {
+                print("SDFPOIJSDFPOSDIFPOSDIFSDF");
+                Navigator.pop(context);
+              }, onError: (error) {
+                print(error);
               });
-            } on FirebaseException catch (e) {
-              if (e.message != null) {
-                showDialog(
-                    context: context,
-                    builder: (t) => ErrorDialog(errorMessage: e.message!));
-              }
-            }
+            }, onError: (error) {
+              print(error);
+            });
+          } else {
+            print("Image is null");
           }
         }
       }

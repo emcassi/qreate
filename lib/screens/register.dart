@@ -1,3 +1,4 @@
+import 'package:community_material_icon/community_material_icon.dart';
 import 'package:flutter/foundation.dart';
 import "package:flutter/material.dart";
 import 'package:qreate/components/hr.dart';
@@ -23,6 +24,17 @@ class _RegisterState extends State<Register> {
 
   String emailErrorMessage = "";
   String passwordErrorMessage = "";
+
+  bool obscureText = true;
+
+  void hideKeyboard(){
+    FocusScopeNode currentFocus = FocusScope.of(context);
+
+    if (!currentFocus.hasPrimaryFocus) {
+      currentFocus.unfocus();
+    }
+  }
+
 
   void signInWithEmail() async {
 
@@ -57,6 +69,8 @@ class _RegisterState extends State<Register> {
         });
       }
     }
+
+    hideKeyboard();
   }
 
   void signInWithApple() {}
@@ -67,16 +81,13 @@ class _RegisterState extends State<Register> {
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: () {
-          FocusScopeNode currentFocus = FocusScope.of(context);
-
-          if (!currentFocus.hasPrimaryFocus) {
-            currentFocus.unfocus();
-          }
+          hideKeyboard();
         },
         child: Scaffold(
           appBar: AppBar(
             title: Text("Register"),
             centerTitle: true,
+            backgroundColor: FirebaseAuth.instance.currentUser == null ? Colors.pink : Colors.green,
           ),
           body: SingleChildScrollView(
               child: Container(
@@ -90,7 +101,7 @@ class _RegisterState extends State<Register> {
                   key: _form,
                   child: Column(children: [
                     TextFormField(
-                      decoration: InputDecoration(hintText: "Email"),
+                      decoration: InputDecoration(hintText: "Email", errorMaxLines: 3),
                       controller: emailController,
                       validator: (text) {
                         final bool emailValid = RegExp(
@@ -107,7 +118,12 @@ class _RegisterState extends State<Register> {
                       },
                     ),
                     TextFormField(
-                      decoration: InputDecoration(hintText: "Password"),
+                      obscureText: obscureText,
+                      decoration: InputDecoration(hintText: "Password", errorMaxLines: 3, suffixIcon: IconButton(icon: Icon(obscureText ? CommunityMaterialIcons.eye : CommunityMaterialIcons.eye_off), onPressed: (){
+                        setState(() {
+                          obscureText = !obscureText;
+                        });
+                      }),),
                       controller: passwordController,
                       validator: (text) {
                         if (text == null || text == "") {
