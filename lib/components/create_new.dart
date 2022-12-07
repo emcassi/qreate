@@ -3,6 +3,7 @@ import "package:flutter/material.dart";
 import 'package:qreate/components/qr_type.dart';
 import 'package:qreate/screens/create_call.dart';
 import 'package:qreate/screens/create_email.dart';
+import 'package:qreate/screens/create_event.dart';
 import 'package:qreate/screens/create_sms.dart';
 import 'package:qreate/screens/create_url.dart';
 import 'package:qreate/screens/create_text.dart';
@@ -33,10 +34,10 @@ class CreateNew extends StatelessWidget {
         QRType(type: "Message", iconData: CommunityMaterialIcons.message_plus, widget: CreateSMS()),
         QRType(type: "Wi-Fi Login", iconData: CommunityMaterialIcons.wifi, widget: CreateWiFi()),
         QRType(type: "Call", iconData: CommunityMaterialIcons.phone, widget: CreateCall()),
-        QRType(type: "Text", iconData: CommunityMaterialIcons.alphabetical, widget: CreateText()),
-        QRType(type: "Event", iconData: CommunityMaterialIcons.calendar, widget: CreateURL()),
-        QRType(type: "Location", iconData: CommunityMaterialIcons.map_marker, widget: CreateURL()),
         QRType(type: "Email", iconData: CommunityMaterialIcons.email, widget: CreateEmail()),
+        QRType(type: "Location", iconData: CommunityMaterialIcons.map_marker, widget: CreateURL()),
+        QRType(type: "Event", iconData: CommunityMaterialIcons.calendar, widget: CreateEvent()),
+        QRType(type: "Text", iconData: CommunityMaterialIcons.alphabetical, widget: CreateText()),
       ],
     );
   }

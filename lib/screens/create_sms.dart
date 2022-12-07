@@ -98,7 +98,7 @@ class _CreateSMSState extends State<CreateSMS> {
                             )),
                       ],
                     ))),
-            ElevatedButton(onPressed: createQR, child: const Text("Create"))
+            ElevatedButton(onPressed: createQR, child: const Text("Create QR Code"))
           ],
         ),
       ),

@@ -44,7 +44,7 @@ class _CreateEmailState extends State<CreateEmail> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Create Text QR"),
+          title: const Text("Create Email QR"),
           centerTitle: true,
         ),
         body: SingleChildScrollView(

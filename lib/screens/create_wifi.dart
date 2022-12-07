@@ -40,7 +40,7 @@ class _CreateWiFiState extends State<CreateWiFi> {
               MaterialPageRoute(
                   builder: (s) => QRPreview(
                         value: qrData,
-                        type: "email",
+                        type: "wifi",
                       )));
         }
       }
