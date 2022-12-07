@@ -172,7 +172,12 @@ class _CreateURLState extends State<CreateURL> {
                         validator: (text) {
                           if (text != null) {
                             if (text.isEmpty) {
-                              return "Text required";
+                              return "URL required";
+                            } else {
+                              bool urlValid = Uri.parse(text).host.isNotEmpty;
+                              if(!urlValid){
+                                return "Invalid URL";
+                              }
                             }
                           }
 
@@ -187,7 +192,7 @@ class _CreateURLState extends State<CreateURL> {
                                   color: Colors.grey,
                                   size: 16,
                                 )))))),
-            ElevatedButton(onPressed: createQR, child: const Text("Create"))
+            ElevatedButton(onPressed: createQR, child: const Text("Create QR Code"))
           ],
         ),
       ),

@@ -67,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
               const Divider(
                 thickness: 1.5,
               ),
-              FirebaseAuth.instance.currentUser == null
+              FirebaseAuth.instance.currentUser != null
                   ? ListView(
                       shrinkWrap: true,
                       children: codes.map((e) => const Text("Test")).toList(),

@@ -1,7 +1,12 @@
 import 'package:community_material_icon/community_material_icon.dart';
 import "package:flutter/material.dart";
 import 'package:qreate/components/qr_type.dart';
+import 'package:qreate/screens/create_call.dart';
+import 'package:qreate/screens/create_email.dart';
+import 'package:qreate/screens/create_sms.dart';
 import 'package:qreate/screens/create_url.dart';
+import 'package:qreate/screens/create_text.dart';
+import 'package:qreate/screens/create_wifi.dart';
 
 class CreateNew extends StatelessWidget {
   const CreateNew({Key? key}) : super(key: key);
@@ -25,12 +30,13 @@ class CreateNew extends StatelessWidget {
       childAspectRatio: (itemWidth / itemHeight),
       children: const [
         QRType(type: "URL", iconData: CommunityMaterialIcons.web, widget: CreateURL()),
+        QRType(type: "Message", iconData: CommunityMaterialIcons.message_plus, widget: CreateSMS()),
+        QRType(type: "Wi-Fi Login", iconData: CommunityMaterialIcons.wifi, widget: CreateWiFi()),
+        QRType(type: "Call", iconData: CommunityMaterialIcons.phone, widget: CreateCall()),
+        QRType(type: "Text", iconData: CommunityMaterialIcons.alphabetical, widget: CreateText()),
         QRType(type: "Event", iconData: CommunityMaterialIcons.calendar, widget: CreateURL()),
-        QRType(type: "Wi-Fi Login", iconData: CommunityMaterialIcons.wifi, widget: CreateURL()),
-        QRType(type: "Email", iconData: CommunityMaterialIcons.email, widget: CreateURL()),
-        QRType(type: "Call", iconData: CommunityMaterialIcons.phone, widget: CreateURL()),
-        QRType(type: "Message", iconData: CommunityMaterialIcons.message_plus, widget: CreateURL()),
         QRType(type: "Location", iconData: CommunityMaterialIcons.map_marker, widget: CreateURL()),
+        QRType(type: "Email", iconData: CommunityMaterialIcons.email, widget: CreateEmail()),
       ],
     );
   }

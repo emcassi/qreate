@@ -72,7 +72,7 @@ class _CreateTextState extends State<CreateText> {
                                   color: Colors.grey,
                                   size: 16,
                                 )))))),
-            ElevatedButton(onPressed: createQR, child: const Text("Create"))
+            ElevatedButton(onPressed: createQR, child: const Text("Create QR Code"))
           ],
         ),
       ),

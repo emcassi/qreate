@@ -1,31 +1,35 @@
 import 'package:community_material_icon/community_material_icon.dart';
 import "package:flutter/material.dart";
+import 'package:mailto/mailto.dart';
 import 'package:qreate/screens/qr_preview.dart';
 
-class CreateText extends StatefulWidget {
-  const CreateText({Key? key}) : super(key: key);
+class CreateEmail extends StatefulWidget {
+  const CreateEmail({Key? key}) : super(key: key);
 
   @override
-  State<CreateText> createState() => _CreateTextState();
+  State<CreateEmail> createState() => _CreateEmailState();
 }
 
-class _CreateTextState extends State<CreateText> {
+class _CreateEmailState extends State<CreateEmail> {
   final _form = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController controller = TextEditingController();
+    final TextEditingController recipientController = TextEditingController();
+    final TextEditingController subjectController = TextEditingController();
+    final TextEditingController messageController = TextEditingController();
 
     void createQR() {
       if (_form.currentState != null) {
         bool isValid = _form.currentState!.validate();
         if (isValid) {
+          Mailto mailto = Mailto(to: [recipientController.text], subject: subjectController.text, body: messageController.text);
           Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (s) => QRPreview(
-                        value: controller.text,
-                        type: "text",
+                        value: mailto.toString(),
+                        type: "email",
                       )));
         }
       }
@@ -43,7 +47,8 @@ class _CreateTextState extends State<CreateText> {
           title: const Text("Create Text QR"),
           centerTitle: true,
         ),
-        body: Column(
+        body: SingleChildScrollView(
+            child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
@@ -51,30 +56,74 @@ class _CreateTextState extends State<CreateText> {
                     const EdgeInsets.symmetric(horizontal: 25, vertical: 50),
                 child: Form(
                     key: _form,
-                    child: TextFormField(
-                        controller: controller,
-                        keyboardType: TextInputType.text,
-                        validator: (text) {
-                          if (text != null) {
-                            if (text.isEmpty) {
-                              return "Text required";
-                            }
-                          }
+                    child: Column(
+                      children: [
+                        TextFormField(
+                            controller: recipientController,
+                            keyboardType: TextInputType.emailAddress,
+                            textInputAction: TextInputAction.next,
+                            validator: (text) {
+                              if (text != null) {
+                                if (text.isEmpty) {
+                                  return "Recipient required";
+                                }
+                              }
 
-                          return null;
-                        },
-                        decoration: InputDecoration(
-                            hintText: "Text",
-                            suffixIcon: IconButton(
-                                onPressed: () => {controller.text = ""},
-                                icon: const Icon(
-                                  CommunityMaterialIcons.close_circle,
-                                  color: Colors.grey,
-                                  size: 16,
-                                )))))),
-            ElevatedButton(onPressed: createQR, child: const Text("Create QR Code"))
+                              return null;
+                            },
+                            decoration: InputDecoration(
+                                hintText: "Recipient",
+                                suffixIcon: IconButton(
+                                    onPressed: () => {recipientController.text = ""},
+                                    icon: const Icon(
+                                      CommunityMaterialIcons.close_circle,
+                                      color: Colors.grey,
+                                      size: 16,
+                                    )))),
+                        Container(margin: EdgeInsets.symmetric(vertical: 15), child: TextFormField(
+                            controller: subjectController,
+                            keyboardType: TextInputType.text,
+                            textInputAction: TextInputAction.next,
+                            decoration: InputDecoration(
+                                hintText: "Subject",
+                                suffixIcon: IconButton(
+                                    onPressed: () => {subjectController.text = ""},
+                                    icon: const Icon(
+                                      CommunityMaterialIcons.close_circle,
+                                      color: Colors.grey,
+                                      size: 16,
+                                    ))))),
+                        TextFormField(
+                            controller: messageController,
+                            keyboardType: TextInputType.multiline,
+                            textInputAction: TextInputAction.newline,
+                            validator: (text) {
+                              if (text != null) {
+                                if (text.isEmpty) {
+                                  return "Message required";
+                                }
+                              }
+
+                              return null;
+                            },
+                            maxLines: 10,
+                            decoration: InputDecoration(
+                              hintText: "Message",
+                              border: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(width: 1, color: Colors.grey),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      width: 2,
+                                      color: Theme.of(context).primaryColor)),
+                            )),
+                      ],
+                    ))),
+            ElevatedButton(
+                onPressed: createQR, child: const Text("Create QR Code"))
           ],
-        ),
+        )),
       ),
     );
   }

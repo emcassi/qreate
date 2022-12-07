@@ -1,6 +1,7 @@
 import 'package:community_material_icon/community_material_icon.dart';
 import "package:flutter/material.dart";
 import 'package:qreate/screens/qr_preview.dart';
+import "package:intl_phone_number_input/intl_phone_number_input.dart";
 
 class CreateCall extends StatefulWidget {
   const CreateCall({Key? key}) : super(key: key);
@@ -11,10 +12,13 @@ class CreateCall extends StatefulWidget {
 
 class _CreateCallState extends State<CreateCall> {
   final _form = GlobalKey<FormState>();
+    final TextEditingController controller = TextEditingController();
+
+    String initialCountry = "US";
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController controller = TextEditingController();
+    PhoneNumber phoneNumber = PhoneNumber(isoCode: initialCountry);
 
     void createQR() {
       if (_form.currentState != null) {
@@ -24,8 +28,8 @@ class _CreateCallState extends State<CreateCall> {
               context,
               MaterialPageRoute(
                   builder: (s) => QRPreview(
-                        value: "tel:${controller.text}",
-                        type: "call",
+                        value: "tel:${phoneNumber.phoneNumber}",
+                        type: "phone",
                       )));
         }
       }
@@ -40,7 +44,7 @@ class _CreateCallState extends State<CreateCall> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Create Text QR"),
+          title: const Text("Create Phone QR"),
           centerTitle: true,
         ),
         body: Column(
@@ -52,26 +56,13 @@ class _CreateCallState extends State<CreateCall> {
                 child: Form(
                     key: _form,
                     child: InternationalPhoneNumberInput(
-                        controller: controller,
-                        validator: (text) {
-                          if (text != null) {
-                            if (text.isEmpty) {
-                              return "Text required";
-                            }
-                          }
-
-                          return null;
-                        },
-                        decoration: InputDecoration(
-                            hintText: "Text",
-                            suffixIcon: IconButton(
-                                onPressed: () => {controller.text = ""},
-                                icon: const Icon(
-                                  CommunityMaterialIcons.close_circle,
-                                  color: Colors.grey,
-                                  size: 16, 
-                                )))))),
-            ElevatedButton(onPressed: createQR, child: const Text("Create"))
+                      onInputChanged: (number) {
+                        phoneNumber = number;
+                      },
+                      initialValue: phoneNumber,
+                      textFieldController: controller,
+                    ))),
+            ElevatedButton(onPressed: createQR, child: const Text("Create QR Code"))
           ],
         ),
       ),

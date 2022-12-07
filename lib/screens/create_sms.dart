@@ -1,31 +1,40 @@
 import 'package:community_material_icon/community_material_icon.dart';
 import "package:flutter/material.dart";
+import 'package:flutter/services.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:qreate/screens/qr_preview.dart';
 
-class CreateText extends StatefulWidget {
-  const CreateText({Key? key}) : super(key: key);
+class CreateSMS extends StatefulWidget {
+  const CreateSMS({Key? key}) : super(key: key);
 
   @override
-  State<CreateText> createState() => _CreateTextState();
+  State<CreateSMS> createState() => _CreateSMSState();
 }
 
-class _CreateTextState extends State<CreateText> {
+class _CreateSMSState extends State<CreateSMS> {
   final _form = GlobalKey<FormState>();
+
+  String initialCountry = "US";
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController controller = TextEditingController();
+    final TextEditingController numberController = TextEditingController();
+    final TextEditingController messageController = TextEditingController();
+
+    PhoneNumber phoneNumber = PhoneNumber(isoCode: initialCountry);
 
     void createQR() {
       if (_form.currentState != null) {
         bool isValid = _form.currentState!.validate();
         if (isValid) {
+          String qrValue = "SMSTO:${phoneNumber.phoneNumber}:${messageController.text}";
+
           Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (s) => QRPreview(
-                        value: controller.text,
-                        type: "text",
+                        value: qrValue,
+                        type: "sms",
                       )));
         }
       }
@@ -35,43 +44,60 @@ class _CreateTextState extends State<CreateText> {
       onTap: () {
         FocusScopeNode currentFocus = FocusScope.of(context);
         if (!currentFocus.hasPrimaryFocus) {
-          currentFocus.unfocus();
+          // currentFocus.unfocus();
+          SystemChannels.textInput.invokeMethod('TextInput.hide');
         }
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Create Text QR"),
+          title: const Text("Create SMS QR"),
           centerTitle: true,
         ),
         body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Container(
                 margin:
                     const EdgeInsets.symmetric(horizontal: 25, vertical: 50),
                 child: Form(
                     key: _form,
-                    child: TextFormField(
-                        controller: controller,
-                        keyboardType: TextInputType.text,
-                        validator: (text) {
-                          if (text != null) {
-                            if (text.isEmpty) {
-                              return "Text required";
-                            }
-                          }
+                    child: Column(
+                      children: [
+                        Container(
+                            child: InternationalPhoneNumberInput(
+                          onInputChanged: (number) {
+                            phoneNumber = number;
+                          },
+                          initialValue: phoneNumber,
+                          textFieldController: numberController,
+                        )),
+                        TextFormField(
+                            controller: messageController,
+                            keyboardType: TextInputType.text,
+                            validator: (text) {
+                              if (text != null) {
+                                if (text.isEmpty) {
+                                  return "Message required";
+                                }
+                              }
 
-                          return null;
-                        },
-                        decoration: InputDecoration(
-                            hintText: "Text",
-                            suffixIcon: IconButton(
-                                onPressed: () => {controller.text = ""},
-                                icon: const Icon(
-                                  CommunityMaterialIcons.close_circle,
-                                  color: Colors.grey,
-                                  size: 16,
-                                )))))),
+                              return null;
+                            },
+                            maxLength: 160,
+                            maxLines: 10,
+                            decoration: InputDecoration(
+                              hintText: "Message",
+                              border: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(width: 1, color: Colors.grey),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      width: 1,
+                                      color: Theme.of(context).primaryColor)),
+                            )),
+                      ],
+                    ))),
             ElevatedButton(onPressed: createQR, child: const Text("Create"))
           ],
         ),

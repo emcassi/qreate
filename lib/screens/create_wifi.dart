@@ -3,32 +3,43 @@ import "package:flutter/material.dart";
 import 'package:mailto/mailto.dart';
 import 'package:qreate/screens/qr_preview.dart';
 
-class CreateEmail extends StatefulWidget {
-  const CreateEmail({Key? key}) : super(key: key);
+class CreateWiFi extends StatefulWidget {
+  const CreateWiFi({Key? key}) : super(key: key);
 
   @override
-  State<CreateEmail> createState() => _CreateEmailState();
+  State<CreateWiFi> createState() => _CreateWiFiState();
 }
 
-class _CreateEmailState extends State<CreateEmail> {
+class _CreateWiFiState extends State<CreateWiFi> {
   final _form = GlobalKey<FormState>();
+    final TextEditingController nameController = TextEditingController();
+    final TextEditingController passwordController = TextEditingController();
+    String authType = "WPA";
+    bool hidden = false;
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController recipientController = TextEditingController();
-    final TextEditingController subjectController = TextEditingController();
-    final TextEditingController messageController = TextEditingController();
+
+
+    void changeAuthType(String? type) {
+      if (type is String) {
+        setState(() {
+          authType = type;
+        });
+      }
+    }
 
     void createQR() {
       if (_form.currentState != null) {
         bool isValid = _form.currentState!.validate();
         if (isValid) {
-          Mailto mailto = Mailto(to: [recipientController.text], subject: subjectController.text, body: messageController.text);
+          String qrData =
+              "WIFI:T:${authType};S:${nameController.text};P:${passwordController.text};H:${hidden}";
           Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (s) => QRPreview(
-                        value: mailto.toString(),
+                        value: qrData,
                         type: "email",
                       )));
         }
@@ -44,7 +55,7 @@ class _CreateEmailState extends State<CreateEmail> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Create Text QR"),
+          title: const Text("Create WiFi QR"),
           centerTitle: true,
         ),
         body: SingleChildScrollView(
@@ -58,66 +69,81 @@ class _CreateEmailState extends State<CreateEmail> {
                     key: _form,
                     child: Column(
                       children: [
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                          Text("Authentication "),
+                          DropdownButton(items: const [
+                            DropdownMenuItem(
+                              child: Text("nopass"),
+                              value: "nopass",
+                            ),
+                            DropdownMenuItem(
+                              child: Text("WPA"),
+                              value: "WPA",
+                            ),
+                            DropdownMenuItem(
+                              child: Text("WEP"),
+                              value: "WEP",
+                            ),
+                          ], value: authType, onChanged: changeAuthType),
+                        ]),
                         TextFormField(
-                            controller: recipientController,
+                            controller: nameController,
                             keyboardType: TextInputType.emailAddress,
                             textInputAction: TextInputAction.next,
                             validator: (text) {
                               if (text != null) {
                                 if (text.isEmpty) {
-                                  return "Recipient required";
+                                  return "Name required";
                                 }
                               }
 
                               return null;
                             },
                             decoration: InputDecoration(
-                                hintText: "Recipient",
+                                hintText: "Name",
                                 suffixIcon: IconButton(
-                                    onPressed: () => {recipientController.text = ""},
+                                    onPressed: () => {nameController.text = ""},
                                     icon: const Icon(
                                       CommunityMaterialIcons.close_circle,
                                       color: Colors.grey,
                                       size: 16,
                                     )))),
-                        Container(margin: EdgeInsets.symmetric(vertical: 15), child: TextFormField(
-                            controller: subjectController,
-                            keyboardType: TextInputType.text,
-                            textInputAction: TextInputAction.next,
-                            decoration: InputDecoration(
-                                hintText: "Subject",
-                                suffixIcon: IconButton(
-                                    onPressed: () => {subjectController.text = ""},
-                                    icon: const Icon(
-                                      CommunityMaterialIcons.close_circle,
-                                      color: Colors.grey,
-                                      size: 16,
-                                    ))))),
                         TextFormField(
-                            controller: messageController,
-                            keyboardType: TextInputType.multiline,
-                            textInputAction: TextInputAction.newline,
+                            controller: passwordController,
+                            keyboardType: TextInputType.text,
+                            obscureText: true,
+                            textInputAction: TextInputAction.next,
                             validator: (text) {
                               if (text != null) {
                                 if (text.isEmpty) {
-                                  return "Message required";
+                                  return "Password required";
                                 }
                               }
 
                               return null;
                             },
-                            maxLines: 10,
                             decoration: InputDecoration(
-                              hintText: "Message",
-                              border: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(width: 1, color: Colors.grey),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      width: 2,
-                                      color: Theme.of(context).primaryColor)),
-                            )),
+                                hintText: "Password",
+                                suffixIcon: IconButton(
+                                    onPressed: () =>
+                                        {passwordController.text = ""},
+                                    icon: const Icon(
+                                      CommunityMaterialIcons.close_circle,
+                                      color: Colors.grey,
+                                      size: 16,
+                                    )))),
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Hidden "),
+                              Switch(
+                                  value: hidden,
+                                  onChanged: (value) => {
+                                    setState(() => {hidden = value})
+                                  })
+                            ]),
                       ],
                     ))),
             ElevatedButton(

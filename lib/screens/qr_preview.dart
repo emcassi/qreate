@@ -5,6 +5,7 @@ import 'package:community_material_icon/community_material_icon.dart';
 import 'package:contrast_checker/contrast_checker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
@@ -41,6 +42,8 @@ class _QRPreviewState extends State<QRPreview> {
   final _form = GlobalKey<FormState>();
 
   TextEditingController textEditingController = TextEditingController();
+
+  bool isAdding = false;
 
   @override
   Widget build(BuildContext context) {
@@ -202,38 +205,48 @@ class _QRPreviewState extends State<QRPreview> {
     }
 
     void save() async {
-      if (FirebaseAuth.instance.currentUser == null) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return authDialog;
-          },
-        );
-      } else {
-        bool isValid = _form.currentState!.validate();
-        if (isValid) {
-          File? imageFile = await qrToFile();
-          if (imageFile != null) {
-            final Reference storageRef = FirebaseStorage.instance.ref("codes");
-            final String codeId = Uuid().v4();
-            final Reference newCodeRef = storageRef.child(codeId);
-            try {
-              await newCodeRef.putFile(imageFile).then((snapshot) {
-                FirebaseFirestore.instance.collection("codes").add({
-                  "user": FirebaseAuth.instance.currentUser!.uid,
-                  "name": textEditingController.text,
-                  "type": widget.type,
-                  "value": widget.value,
-                  "imageURL": snapshot.ref.getDownloadURL()
-                }).then((doc) {
-                  Navigator.pop(context);
+      if(!isAdding) {
+        setState(() {
+          isAdding = true;
+        });
+        if (FirebaseAuth.instance.currentUser == null) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return authDialog;
+            },
+          );
+        } else {
+          bool isValid = _form.currentState!.validate();
+          if (isValid) {
+            File? imageFile = await qrToFile();
+            if (imageFile != null) {
+              final Reference storageRef = FirebaseStorage.instance.ref(
+                  "codes");
+              final String codeId = Uuid().v4();
+              final Reference newCodeRef = storageRef.child(codeId);
+
+              try {
+                await newCodeRef.putFile(imageFile).then((snapshot) async {
+                  String downloadURL = await newCodeRef.getDownloadURL();
+                  FirebaseFirestore.instance.collection("codes").add({
+                    "user": FirebaseAuth.instance.currentUser!.uid,
+                    "name": textEditingController.text,
+                    "type": widget.type,
+                    "value": widget.value,
+                    "imageURL": downloadURL
+                  }).then((doc) {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  });
                 });
-              });
-            } on FirebaseException catch (e) {
-              if (e.message != null) {
-                showDialog(
-                    context: context,
-                    builder: (t) => ErrorDialog(errorMessage: e.message!));
+              } on FirebaseException catch (e) {
+                if (e.message != null) {
+                  isAdding = false;
+                  showDialog(
+                      context: context,
+                      builder: (t) => ErrorDialog(errorMessage: e.message!));
+                }
               }
             }
           }
@@ -359,7 +372,7 @@ class _QRPreviewState extends State<QRPreview> {
                       margin: const EdgeInsets.symmetric(
                           vertical: 25, horizontal: 10),
                       child: ElevatedButton(
-                          onPressed: save, child: const Text("Save"))),
+                          onPressed: save, style: isAdding ? ElevatedButton.styleFrom(backgroundColor: Colors.grey) : ElevatedButton.styleFrom(backgroundColor: Theme.of(context).primaryColor), child: isAdding ? const CupertinoActivityIndicator(radius: 12, color: Colors.white,) : const Text("Save"))),
                 ])
               ]),
             ),

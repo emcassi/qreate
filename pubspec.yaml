@@ -50,6 +50,7 @@ dependencies:
   firebase_storage: ^11.0.6
   uuid: ^3.0.7
   intl_phone_number_input: ^0.7.1
+  mailto: ^2.0.0
 
 dev_dependencies:
   flutter_test:
