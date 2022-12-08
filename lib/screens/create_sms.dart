@@ -27,7 +27,8 @@ class _CreateSMSState extends State<CreateSMS> {
       if (_form.currentState != null) {
         bool isValid = _form.currentState!.validate();
         if (isValid) {
-          String qrValue = "SMSTO:${phoneNumber.phoneNumber}:${messageController.text}";
+          String qrValue =
+              "SMSTO:${phoneNumber.phoneNumber}:${messageController.text}";
 
           Navigator.push(
               context,
@@ -74,6 +75,7 @@ class _CreateSMSState extends State<CreateSMS> {
                         TextFormField(
                             controller: messageController,
                             keyboardType: TextInputType.text,
+                            textCapitalization: TextCapitalization.sentences,
                             validator: (text) {
                               if (text != null) {
                                 if (text.isEmpty) {
@@ -87,7 +89,7 @@ class _CreateSMSState extends State<CreateSMS> {
                             maxLines: 10,
                             decoration: InputDecoration(
                               hintText: "Message",
-                              border: OutlineInputBorder(
+                              border: const OutlineInputBorder(
                                 borderSide:
                                     BorderSide(width: 1, color: Colors.grey),
                               ),
@@ -98,7 +100,8 @@ class _CreateSMSState extends State<CreateSMS> {
                             )),
                       ],
                     ))),
-            ElevatedButton(onPressed: createQR, child: const Text("Create QR Code"))
+            ElevatedButton(
+                onPressed: createQR, child: const Text("Create QR Code"))
           ],
         ),
       ),

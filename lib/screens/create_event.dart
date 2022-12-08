@@ -56,7 +56,6 @@ class _CreateEventState extends State<CreateEvent> {
       if (_form.currentState != null) {
         bool isValid = _form.currentState!.validate();
         if (isValid) {
-
           final invite = VCalendar.createEvent(
             organizerEmail: emailController.text,
             start: startDate,
@@ -78,8 +77,6 @@ class _CreateEventState extends State<CreateEvent> {
         }
       }
     }
-
-    print(startDate);
 
     return GestureDetector(
       onTap: () {
@@ -105,7 +102,7 @@ class _CreateEventState extends State<CreateEvent> {
                     child: Column(
                       children: [
                         Container(
-                          margin: EdgeInsets.symmetric(vertical: 15),
+                          margin: const EdgeInsets.symmetric(vertical: 15),
                           child: TextFormField(
                               controller: nameController,
                               keyboardType: TextInputType.emailAddress,
@@ -147,14 +144,17 @@ class _CreateEventState extends State<CreateEvent> {
                               const Text("Start Time "),
                               TextButton(
                                   onPressed: () {
-                                    DatePicker.showTime12hPicker(context, showTitleActions: true, currentTime: startDate, onChanged: (date) {
+                                    DatePicker.showTime12hPicker(context,
+                                        showTitleActions: true,
+                                        currentTime: startDate,
+                                        onChanged: (date) {
                                       setState(() {
                                         startDate = date;
                                       });
                                     });
                                   },
-                                  child: Text(
-                                      DateFormat.jm().format(startDate))),
+                                  child:
+                                      Text(DateFormat.jm().format(startDate))),
                             ]),
                         Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -173,84 +173,95 @@ class _CreateEventState extends State<CreateEvent> {
                               const Text("End Time"),
                               TextButton(
                                   onPressed: () {
-                                    DatePicker.showTime12hPicker(context, showTitleActions: true, currentTime: endDate, onChanged: (date) {
+                                    DatePicker.showTime12hPicker(context,
+                                        showTitleActions: true,
+                                        currentTime: endDate,
+                                        onChanged: (date) {
                                       setState(() {
                                         endDate = date;
                                       });
                                     });
                                   },
-                                  child: Text(
-                                      DateFormat.jm().format(endDate))),
+                                  child: Text(DateFormat.jm().format(endDate))),
                             ]),
-                          Container(margin: EdgeInsets.symmetric(vertical: 15),child: TextFormField(
-                            controller: urlController,
-                            keyboardType: TextInputType.url,
-                            textInputAction: TextInputAction.next,
-                            validator: (text){
-                              if(text != null){
-                                if(Uri.tryParse(text) == null){
-                                  return "Invalid URL";
-                                }
-                              }
-                              return null;
-                            },
-                            decoration: InputDecoration(
-                                hintText: "URL",
-                                suffixIcon: IconButton(
-                                    onPressed: () =>
-                                    {urlController.text = ""},
-                                    icon: const Icon(
-                                      CommunityMaterialIcons.close_circle,
-                                      color: Colors.grey,
-                                      size: 16,
-                                    ))))),
-            Container(margin: EdgeInsets.symmetric(vertical: 15),child: TextFormField(
-                            controller: addressController,
-                            keyboardType: TextInputType.streetAddress,
-                            textInputAction: TextInputAction.next,
-                            decoration: InputDecoration(
-                                hintText: "Address",
-                                suffixIcon: IconButton(
-                                    onPressed: () =>
-                                    {addressController.text = ""},
-                                    icon: const Icon(
-                                      CommunityMaterialIcons.close_circle,
-                                      color: Colors.grey,
-                                      size: 16,
-                                    ))))),
-            Container(margin: EdgeInsets.symmetric(vertical: 15),child: TextFormField(
-                            controller: emailController,
-                            keyboardType: TextInputType.emailAddress,
-                            textInputAction: TextInputAction.next,
-                            validator: (text) {
-                              if (text != null) {
-                                if (text.isEmpty) {
-                                  return "Title required";
-                                }
-                              }
+                        Container(
+                            margin: const EdgeInsets.symmetric(vertical: 15),
+                            child: TextFormField(
+                                controller: urlController,
+                                keyboardType: TextInputType.url,
+                                textInputAction: TextInputAction.next,
+                                validator: (text) {
+                                  if (text != null) {
+                                    if (Uri.tryParse(text) == null) {
+                                      return "Invalid URL";
+                                    }
+                                  }
+                                  return null;
+                                },
+                                decoration: InputDecoration(
+                                    hintText: "URL",
+                                    suffixIcon: IconButton(
+                                        onPressed: () =>
+                                            {urlController.text = ""},
+                                        icon: const Icon(
+                                          CommunityMaterialIcons.close_circle,
+                                          color: Colors.grey,
+                                          size: 16,
+                                        ))))),
+                        Container(
+                            margin: const EdgeInsets.symmetric(vertical: 15),
+                            child: TextFormField(
+                                controller: addressController,
+                                keyboardType: TextInputType.streetAddress,
+                                textCapitalization: TextCapitalization.words,
+                                textInputAction: TextInputAction.next,
+                                decoration: InputDecoration(
+                                    hintText: "Address",
+                                    suffixIcon: IconButton(
+                                        onPressed: () =>
+                                            {addressController.text = ""},
+                                        icon: const Icon(
+                                          CommunityMaterialIcons.close_circle,
+                                          color: Colors.grey,
+                                          size: 16,
+                                        ))))),
+                        Container(
+                            margin: const EdgeInsets.symmetric(vertical: 15),
+                            child: TextFormField(
+                                controller: emailController,
+                                keyboardType: TextInputType.emailAddress,
+                                textCapitalization: TextCapitalization.none,
+                                textInputAction: TextInputAction.next,
+                                validator: (text) {
+                                  if (text != null) {
+                                    if (text.isEmpty) {
+                                      return "Title required";
+                                    }
+                                  }
 
-                              return null;
-                            },
-                            decoration: InputDecoration(
-                                hintText: "Email",
-                                suffixIcon: IconButton(
-                                    onPressed: () =>
-                                    {emailController.text = ""},
-                                    icon: const Icon(
-                                      CommunityMaterialIcons.close_circle,
-                                      color: Colors.grey,
-                                      size: 16,
-                                    ))))),
+                                  return null;
+                                },
+                                decoration: InputDecoration(
+                                    hintText: "Email",
+                                    suffixIcon: IconButton(
+                                        onPressed: () =>
+                                            {emailController.text = ""},
+                                        icon: const Icon(
+                                          CommunityMaterialIcons.close_circle,
+                                          color: Colors.grey,
+                                          size: 16,
+                                        ))))),
                         TextFormField(
                             controller: detailsController,
                             keyboardType: TextInputType.multiline,
+                            textCapitalization: TextCapitalization.sentences,
                             textInputAction: TextInputAction.newline,
                             maxLines: 8,
                             decoration: InputDecoration(
                               hintText: "Details",
                               border: const OutlineInputBorder(
                                 borderSide:
-                                BorderSide(width: 1, color: Colors.grey),
+                                    BorderSide(width: 1, color: Colors.grey),
                               ),
                               focusedBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
@@ -258,10 +269,11 @@ class _CreateEventState extends State<CreateEvent> {
                                       color: Theme.of(context).primaryColor)),
                             )),
                       ],
-
                     ))),
-            Container(margin: EdgeInsets.only(bottom: 75),child: ElevatedButton(
-                onPressed: createQR, child: const Text("Create QR Code")))
+            Container(
+                margin: const EdgeInsets.only(bottom: 75),
+                child: ElevatedButton(
+                    onPressed: createQR, child: const Text("Create QR Code")))
           ],
         )),
       ),

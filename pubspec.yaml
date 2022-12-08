@@ -54,6 +54,8 @@ dependencies:
   intl: ^0.17.0
   flutter_datetime_picker: ^1.5.1
   enough_icalendar: ^0.13.0
+  google_sign_in: ^5.4.2
+  the_apple_sign_in: ^1.1.1
 
 dev_dependencies:
   flutter_test:

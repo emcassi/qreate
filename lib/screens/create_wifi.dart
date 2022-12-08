@@ -34,7 +34,7 @@ class _CreateWiFiState extends State<CreateWiFi> {
         bool isValid = _form.currentState!.validate();
         if (isValid) {
           String qrData =
-              "WIFI:T:${authType};S:${nameController.text};P:${passwordController.text};H:${hidden}";
+              "WIFI:T:$authType;S:${nameController.text};P:${passwordController.text};H:$hidden";
           Navigator.push(
               context,
               MaterialPageRoute(
@@ -72,25 +72,26 @@ class _CreateWiFiState extends State<CreateWiFi> {
                         Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                          Text("Authentication "),
+                          const Text("Authentication"),
                           DropdownButton(items: const [
                             DropdownMenuItem(
-                              child: Text("nopass"),
                               value: "nopass",
+                              child: Text("nopass"),
                             ),
                             DropdownMenuItem(
-                              child: Text("WPA"),
                               value: "WPA",
+                              child: Text("WPA"),
                             ),
                             DropdownMenuItem(
-                              child: Text("WEP"),
                               value: "WEP",
+                              child: Text("WEP"),
                             ),
                           ], value: authType, onChanged: changeAuthType),
                         ]),
                         TextFormField(
                             controller: nameController,
-                            keyboardType: TextInputType.emailAddress,
+                            keyboardType: TextInputType.text,
+                            textCapitalization: TextCapitalization.words,
                             textInputAction: TextInputAction.next,
                             validator: (text) {
                               if (text != null) {
@@ -137,7 +138,7 @@ class _CreateWiFiState extends State<CreateWiFi> {
                         Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("Hidden "),
+                              const Text("Hidden "),
                               Switch(
                                   value: hidden,
                                   onChanged: (value) => {

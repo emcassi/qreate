@@ -293,6 +293,7 @@ class _QRPreviewState extends State<QRPreview> {
                         key: _form,
                         child: TextFormField(
                           maxLength: 32,
+                          textCapitalization: TextCapitalization.sentences,
                           validator: (text) {
                             if (text != null) {
                               if (text.isEmpty) {

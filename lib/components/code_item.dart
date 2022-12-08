@@ -1,104 +1,195 @@
+import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:gallery_saver/gallery_saver.dart';
+import 'package:http/http.dart' as HTTP;
+import 'package:path/path.dart';
+
 import 'package:community_material_icon/community_material_icon.dart';
 import "package:flutter/material.dart";
+import 'package:flutter/services.dart';
+import 'package:gallery_saver/files.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:qreate/models/qr_code.dart';
+import 'package:share_plus/share_plus.dart';
 
 class CodeItem extends StatelessWidget {
   final QRCode code;
+  final Function getCodes;
 
-  const CodeItem({super.key, required this.code});
+  const CodeItem({super.key, required this.code, required this.getCodes});
 
   @override
   Widget build(BuildContext context) {
-    void morePressed() {
+    Future<File> fileFromImageUrl() async {
+      final response = await HTTP.get(Uri.parse(code.imageURL));
+
+      final documentDirectory = await getApplicationDocumentsDirectory();
+
+      final file = File(join(documentDirectory.path, 'qr.png'));
+
+      file.writeAsBytesSync(response.bodyBytes);
+
+      return file;
+    }
+
+    void share() async {
+      File imageFile = await fileFromImageUrl();
+      Share.shareXFiles([XFile(imageFile.path)]);
+    }
+
+    void download() async {
+      File imageFile = await fileFromImageUrl();
+      GallerySaver.saveImage(imageFile.path);
       showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-              titlePadding: const EdgeInsets.all(0),
-              contentPadding: const EdgeInsets.all(0),
-              content: Container(
-                width: MediaQuery.of(context).size.width - 50,
-                height: 300,
-                padding: EdgeInsets.all(25),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        SizedBox(
-                            width: 75,
-                            height: 75,
-                            child: Image.network(code.imageURL)),
-                        Container(
-                          height: 75,
-                          margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(code.name, textAlign: TextAlign.left, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22),),
-                            Text(code.type, textAlign: TextAlign.left, style: const TextStyle(fontSize: 16),),
-                          ],
-                        ),),
-                      ],
-                    ),
-                    Container(
-                      width: 200,
-                        height: 50,
-                        margin: EdgeInsets.symmetric(vertical: 10),
-                        child: ElevatedButton(
-                            onPressed: () {},
+          context: context,
+          builder: (t) => AlertDialog(
+                content: SizedBox(
+                  height: 100,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Saved",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 24),
+                      ),
+                      const Text(
+                        "The QR code has been saved to your images.",
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text("Ok"))
+                    ],
+                  ),
+                ),
+              ));
+    }
+
+    void delete() async {
+      showDialog(
+          context: context,
+          builder: (t) => AlertDialog(
+                content: SizedBox(
+                  height: 100,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Delete?",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 24),
+                      ),
+                      const Text(
+                        "Are you sure you want to delete this code?",
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      Row(
+                        children: [
+                          ElevatedButton(
                             style: ElevatedButton.styleFrom(
                                 backgroundColor:
                                     Theme.of(context).primaryColor),
-                            child: Text("Edit"))),
-                    Container(
-                      width: 200,
-                        height: 50,
-                        margin: EdgeInsets.symmetric(vertical: 10),
-                        child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () async {
+                              await FirebaseFirestore.instance
+                                  .collection("codes")
+                                  .doc(code.id)
+                                  .delete();
+                              getCodes();
+                            },
+                            child: const Text("Yes",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                    color: Colors.white)),
+                          ),
+                          ElevatedButton(
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.red),
-                            child: Text("Delete"))),
-                  ],
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text("No",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                    color: Colors.white)),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
                 ),
               ));
-        },
-      );
     }
 
     return Container(
-        height: 100,
-        padding: const EdgeInsets.symmetric(vertical: 20),
+        height: 130,
+        padding: const EdgeInsets.symmetric(vertical: 10),
         decoration: const BoxDecoration(
             border: Border(bottom: BorderSide(width: 1, color: Colors.grey))),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-                width: 100, height: 100, child: Image.network(code.imageURL)),
+                margin: const EdgeInsets.only(left: 15),
+                child: Image.network(
+                  code.imageURL,
+                  width: 100,
+                  height: 100,
+                )),
             Container(
-              height: 100,
+              height: 115,
               width: MediaQuery.of(context).size.width - 150,
+              margin: const EdgeInsets.symmetric(horizontal: 15),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text(code.name),
+                  Text(
+                    code.name,
+                    style: const TextStyle(
+                        fontSize: 22, fontWeight: FontWeight.bold),
+                  ),
                   Text(code.type),
+                  Container(
+                      margin: const EdgeInsets.only(top: 10),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            ElevatedButton(
+                                onPressed: download,
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        Theme.of(context).primaryColor),
+                                child: const Icon(
+                                  CommunityMaterialIcons.download,
+                                  color: Colors.white,
+                                )),
+                            ElevatedButton(
+                                onPressed: share,
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        Theme.of(context).primaryColor),
+                                child: Icon(
+                                  Platform.isIOS
+                                      ? CommunityMaterialIcons.export_variant
+                                      : CommunityMaterialIcons.share,
+                                  color: Colors.white,
+                                )),
+                            ElevatedButton(
+                                onPressed: delete,
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red),
+                                child: const Icon(
+                                  CommunityMaterialIcons.trash_can,
+                                  color: Colors.white,
+                                )),
+                          ])),
                 ],
               ),
             ),
-            IconButton(
-                onPressed: () {
-                  morePressed();
-                },
-                icon: const Icon(
-                  CommunityMaterialIcons.dots_vertical,
-                  color: Colors.grey,
-                  size: 32,
-                ))
           ],
         ));
   }

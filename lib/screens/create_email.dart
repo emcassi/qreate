@@ -60,6 +60,7 @@ class _CreateEmailState extends State<CreateEmail> {
                       children: [
                         TextFormField(
                             controller: recipientController,
+                            textCapitalization: TextCapitalization.sentences,
                             keyboardType: TextInputType.emailAddress,
                             textInputAction: TextInputAction.next,
                             validator: (text) {
@@ -80,9 +81,10 @@ class _CreateEmailState extends State<CreateEmail> {
                                       color: Colors.grey,
                                       size: 16,
                                     )))),
-                        Container(margin: EdgeInsets.symmetric(vertical: 15), child: TextFormField(
+                        Container(margin: const EdgeInsets.symmetric(vertical: 15), child: TextFormField(
                             controller: subjectController,
                             keyboardType: TextInputType.text,
+                            textCapitalization: TextCapitalization.sentences,
                             textInputAction: TextInputAction.next,
                             decoration: InputDecoration(
                                 hintText: "Subject",
@@ -96,6 +98,7 @@ class _CreateEmailState extends State<CreateEmail> {
                         TextFormField(
                             controller: messageController,
                             keyboardType: TextInputType.multiline,
+                            textCapitalization: TextCapitalization.sentences,
                             textInputAction: TextInputAction.newline,
                             validator: (text) {
                               if (text != null) {

@@ -55,24 +55,25 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> with RouteAware {
   List<QRCode> codes = [];
-
-  Future<List?> getCodes() async {
+    Future<List?> getCodes() async {
     List<QRCode> temp = [];
+    if(FirebaseAuth.instance.currentUser != null){
     var getDocs = FirebaseFirestore.instance
         .collection("codes")
         .where("user", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
         .orderBy("timestamp", descending: true)
         .get();
     await getDocs.then((snapshot) {
-      for (var doc in snapshot.docs) {
-        Map<String, dynamic> data = doc.data();
-        temp.add(QRCode(data["name"], data["type"], data["user"], data["value"],
-            data["imageURL"]));
-      }
-      setState(() {
-        codes = temp;
-      });
+    for (var doc in snapshot.docs) {
+    Map<String, dynamic> data = doc.data();
+    temp.add(QRCode(data["id"], data["name"], data["type"], data["user"], data["value"],
+    data["imageURL"]));
+    }
     });
+    setState(() {
+    codes = temp;
+    });
+    }
     return codes;
   }
 
@@ -92,32 +93,81 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
     super.didChangeDependencies();
   }
 
-  @override
-  void didPush() {
-    print("PUSHED");
-    super.didPush();
-  }
-
-  @override
-  void didPop() {
-    print("POPPED");
-    super.didPop();
-  }
 
   @override
   void didPopNext() {
-    print("SDF:LKSDJF");
     getCodes();
     super.didPopNext();
   }
 
   @override
   Widget build(BuildContext context) {
+
+    Widget authView = SizedBox(
+        height: MediaQuery.of(context).size.height - 400,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+                margin: const EdgeInsets.only(bottom: 25),
+                child: const Text(
+                  "To save QR codes",
+                  style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w600,
+                      color: Color.fromARGB(255, 68, 93, 133)),
+                )),
+            Column(children: [
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (t) => const Login()));
+                  },
+                  style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(150, 50),
+                      shape: RoundedRectangleBorder(
+                          borderRadius:
+                          BorderRadius.circular(25))),
+                  child: const Text(
+                    "Login",
+                    style: TextStyle(fontSize: 24),
+                  )),
+              Container(
+                height: 25,
+              ),
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (t) => const Register()));
+                  },
+                  style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(150, 50),
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                          side: BorderSide(
+                              width: 2,
+                              color: Theme.of(context)
+                                  .primaryColor))),
+                  child: Text(
+                    "Register",
+                    style: TextStyle(
+                        fontSize: 24,
+                        color: Theme.of(context).primaryColor),
+                  )),
+            ])
+          ],
+        ));
+
     return Scaffold(
         appBar: AppBar(
           title: Text(widget.title),
           centerTitle: true,
-          leading: IconButton(
+          leading: FirebaseAuth.instance.currentUser == null ? Container() : IconButton(
             icon: const Icon(CommunityMaterialIcons.cog),
             onPressed: () {
               Navigator.push(
@@ -147,73 +197,26 @@ class _MyHomePageState extends State<MyHomePage> with RouteAware {
               const Divider(
                 thickness: 1.5,
               ),
-              FirebaseAuth.instance.currentUser != null
-                  ? ListView(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      scrollDirection: Axis.vertical,
-                      children:
-                          codes.map((code) => CodeItem(code: code)).toList(),
-                    )
-                  : SizedBox(
-                      height: MediaQuery.of(context).size.height - 400,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                              margin: const EdgeInsets.only(bottom: 25),
-                              child: const Text(
-                                "To save QR codes",
-                                style: TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color.fromARGB(255, 68, 93, 133)),
-                              )),
-                          Column(children: [
-                            ElevatedButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (t) => const Login()));
-                                },
-                                style: ElevatedButton.styleFrom(
-                                    minimumSize: const Size(150, 50),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(25))),
-                                child: const Text(
-                                  "Login",
-                                  style: TextStyle(fontSize: 24),
-                                )),
-                            Container(
-                              height: 25,
-                            ),
-                            ElevatedButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (t) => const Register()));
-                                },
-                                style: ElevatedButton.styleFrom(
-                                    minimumSize: const Size(150, 50),
-                                    backgroundColor: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(25),
-                                        side: BorderSide(
-                                            width: 2,
-                                            color: Theme.of(context)
-                                                .primaryColor))),
-                                child: Text(
-                                  "Register",
-                                  style: TextStyle(
-                                      fontSize: 24,
-                                      color: Theme.of(context).primaryColor),
-                                )),
-                          ])
-                        ],
-                      )),
+              StreamBuilder<User?>(
+                stream: FirebaseAuth.instance.authStateChanges(),
+                builder: (context, snapshot){
+                  if(snapshot.hasData){
+                    if(codes.isEmpty){
+                      return Container(height: 300, child: const Center(child: Text("No codes saved. Create one now")));
+                    } else {
+                      return ListView(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        scrollDirection: Axis.vertical,
+                        children:
+                        codes.map((code) => CodeItem(code: code, getCodes: getCodes)).toList(),
+                      );
+                    }
+                  } else {
+                    return authView;
+                  }
+                },
+              ),
             ],
           ),
         ));

@@ -54,6 +54,7 @@ class _CreateTextState extends State<CreateText> {
                     child: TextFormField(
                         controller: controller,
                         keyboardType: TextInputType.text,
+                        textCapitalization: TextCapitalization.sentences,
                         validator: (text) {
                           if (text != null) {
                             if (text.isEmpty) {
@@ -72,7 +73,8 @@ class _CreateTextState extends State<CreateText> {
                                   color: Colors.grey,
                                   size: 16,
                                 )))))),
-            ElevatedButton(onPressed: createQR, child: const Text("Create QR Code"))
+            ElevatedButton(
+                onPressed: createQR, child: const Text("Create QR Code"))
           ],
         ),
       ),

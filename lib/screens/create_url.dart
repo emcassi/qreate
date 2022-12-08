@@ -118,7 +118,6 @@ class _CreateURLState extends State<CreateURL> {
           break;
         case "www.youtube.com":
         case "youtube.com":
-          print("YOUTUBE");
           image = Image.asset("assets/images/youtube.png");
           break;
         case "www.zoom.com":

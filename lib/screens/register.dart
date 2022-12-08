@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:community_material_icon/community_material_icon.dart';
 import 'package:flutter/foundation.dart';
 import "package:flutter/material.dart";
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:qreate/components/hr.dart';
 import 'package:qreate/screens/login.dart';
 import "package:sign_in_button/sign_in_button.dart";
 import "package:firebase_auth/firebase_auth.dart";
+import 'package:the_apple_sign_in/the_apple_sign_in.dart';
 
 class Register extends StatefulWidget {
   const Register({Key? key}) : super(key: key);
@@ -73,9 +77,54 @@ class _RegisterState extends State<Register> {
     hideKeyboard();
   }
 
-  void createUserWithApple() {}
+  Future<UserCredential?> createUserWithApple() async {
 
-  void createUserWithGoogle() {}
+    try {
+      final AuthorizationResult appleResult = await TheAppleSignIn
+          .performRequests([
+        const AppleIdRequest(requestedScopes: [Scope.email, Scope.fullName])
+      ]);
+
+      if (appleResult.error != null) {
+        // handle errors from Apple here
+      }
+
+      if (appleResult.credential != null) {
+        Iterable<int> authCode = appleResult.credential!.authorizationCode ??
+            [];
+        Iterable<int> idToken = appleResult.credential!.identityToken ?? [];
+
+        final AuthCredential credential = OAuthProvider("apple.com").credential(
+          accessToken: String.fromCharCodes(authCode),
+          idToken: String.fromCharCodes(idToken),
+        );
+        UserCredential userCredential = await FirebaseAuth.instance
+            .signInWithCredential(credential);
+        Navigator.pop(context);
+        return userCredential;
+      }
+    } catch(e){
+      print(e);
+    }
+  }
+
+  Future<UserCredential> createUserWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+    Navigator.pop(context);
+    return userCredential;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +136,6 @@ class _RegisterState extends State<Register> {
           appBar: AppBar(
             title: Text("Register"),
             centerTitle: true,
-            backgroundColor: FirebaseAuth.instance.currentUser == null ? Colors.pink : Colors.green,
           ),
           body: SingleChildScrollView(
               child: Container(
@@ -153,8 +201,8 @@ class _RegisterState extends State<Register> {
                     margin: EdgeInsets.symmetric(vertical: 25),
                     child: HR(text: "OR")),
                 Column(children: [
-                  SignInButton(Buttons.apple, text: "Sign up with Apple", onPressed: () {}),
-                  SignInButton(Buttons.google, text: "Sign up with Google", onPressed: () {}),
+                  Platform.isIOS ? SignInButton(Buttons.apple, text: "Sign up with Apple", onPressed: createUserWithApple) : Container(),
+                  SignInButton(Buttons.google, text: "Sign up with Google", onPressed: createUserWithGoogle),
                 ]),
               ],
             ),

@@ -31,12 +31,11 @@ class CreateNew extends StatelessWidget {
       childAspectRatio: (itemWidth / itemHeight),
       children: const [
         QRType(type: "URL", iconData: CommunityMaterialIcons.web, widget: CreateURL()),
-        QRType(type: "Message", iconData: CommunityMaterialIcons.message_plus, widget: CreateSMS()),
         QRType(type: "Wi-Fi Login", iconData: CommunityMaterialIcons.wifi, widget: CreateWiFi()),
+        QRType(type: "Message", iconData: CommunityMaterialIcons.message_plus, widget: CreateSMS()),
         QRType(type: "Call", iconData: CommunityMaterialIcons.phone, widget: CreateCall()),
-        QRType(type: "Email", iconData: CommunityMaterialIcons.email, widget: CreateEmail()),
-        QRType(type: "Location", iconData: CommunityMaterialIcons.map_marker, widget: CreateURL()),
         QRType(type: "Event", iconData: CommunityMaterialIcons.calendar, widget: CreateEvent()),
+        QRType(type: "Email", iconData: CommunityMaterialIcons.email, widget: CreateEmail()),
         QRType(type: "Text", iconData: CommunityMaterialIcons.alphabetical, widget: CreateText()),
       ],
     );
