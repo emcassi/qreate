@@ -7,7 +7,7 @@ import 'package:qreate/screens/create_event.dart';
 import 'package:qreate/screens/create_github.dart';
 import 'package:qreate/screens/create_instagram.dart';
 import 'package:qreate/screens/create_sms.dart';
-import 'package:qreate/screens/create_snapchat.dart';
+import 'package:qreate/screens/create_pinterest.dart';
 import 'package:qreate/screens/create_tiktok.dart';
 import 'package:qreate/screens/create_twitch.dart';
 import 'package:qreate/screens/create_twitter.dart';
@@ -48,7 +48,7 @@ class CreateNew extends StatelessWidget {
         QRType(type: "Instagram", iconData: CommunityMaterialIcons.instagram, widget: CreateInstagram()),
         QRType(type: "Twitter", iconData: CommunityMaterialIcons.twitter, widget: CreateTwitter()),
         QRType(type: "Tiktok", iconData: Icons.tiktok, widget: CreateTiktok()),
-        QRType(type: "Snapchat", iconData: Icons.snapchat, widget: CreateSnapchat()),
+        QRType(type: "Pinterest", iconData: CommunityMaterialIcons.pinterest, widget: CreatePinterest()),
         QRType(type: "Twitch", iconData: CommunityMaterialIcons.twitch, widget: CreateTwitch()),
         QRType(type: "Youtube", iconData: CommunityMaterialIcons.youtube, widget: CreateYouTube()),
         QRType(type: "Github", iconData: CommunityMaterialIcons.github, widget: CreateGithub()),

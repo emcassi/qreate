@@ -65,6 +65,7 @@ class _CreateSMSState extends State<CreateSMS> {
                     child: Column(
                       children: [
                         Container(
+                          margin: const EdgeInsets.symmetric(vertical: 10),
                             child: InternationalPhoneNumberInput(
                           onInputChanged: (number) {
                             phoneNumber = number;

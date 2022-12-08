@@ -82,6 +82,8 @@ class _CreateURLState extends State<CreateURL> {
           break;
         case "www.twitch.com":
         case "twitch.com":
+        case "www.twitch.tv":
+        case "twitch.tv":
           image = Image.asset("assets/images/twitch.png");
           break;
         case "www.twitter.com":
@@ -118,6 +120,8 @@ class _CreateURLState extends State<CreateURL> {
           break;
         case "www.youtube.com":
         case "youtube.com":
+        case "www.youtu.be":
+        case "youtu.be":
           image = Image.asset("assets/images/youtube.png");
           break;
         case "www.zoom.com":
@@ -174,7 +178,7 @@ class _CreateURLState extends State<CreateURL> {
                               return "URL required";
                             } else {
                               bool urlValid = Uri.parse(text).host.isNotEmpty;
-                              if(!urlValid){
+                              if (!urlValid) {
                                 return "Invalid URL";
                               }
                             }
@@ -191,7 +195,8 @@ class _CreateURLState extends State<CreateURL> {
                                   color: Colors.grey,
                                   size: 16,
                                 )))))),
-            ElevatedButton(onPressed: createQR, child: const Text("Create QR Code"))
+            ElevatedButton(
+                onPressed: createQR, child: const Text("Create QR Code"))
           ],
         ),
       ),

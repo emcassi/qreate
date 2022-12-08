@@ -112,7 +112,7 @@ class _CreateEmailState extends State<CreateEmail> {
                             maxLines: 10,
                             decoration: InputDecoration(
                               hintText: "Message",
-                              border: OutlineInputBorder(
+                              border: const OutlineInputBorder(
                                 borderSide:
                                     BorderSide(width: 1, color: Colors.grey),
                               ),

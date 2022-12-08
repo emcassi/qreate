@@ -24,7 +24,7 @@ class _CreateTwitchState extends State<CreateTwitch> {
               context,
               MaterialPageRoute(
                   builder: (s) => QRPreview(
-                        value: "https://www.twitch.com/${controller.text}",
+                        value: "https://www.twitch.tv/${controller.text}",
                         type: "twitch",
                     image: Image.asset("assets/images/twitch.png"),
                       )));

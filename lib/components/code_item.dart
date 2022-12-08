@@ -74,7 +74,7 @@ class CodeItem extends StatelessWidget {
           context: context,
           builder: (t) => AlertDialog(
                 content: SizedBox(
-                  height: 125,
+                  height: 150,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -132,7 +132,7 @@ class CodeItem extends StatelessWidget {
     }
 
     return Container(
-        height: 130,
+        height: 150,
         padding: const EdgeInsets.symmetric(vertical: 10),
         decoration: const BoxDecoration(
             border: Border(bottom: BorderSide(width: 1, color: Colors.grey))),
@@ -147,7 +147,7 @@ class CodeItem extends StatelessWidget {
                   height: 100,
                 )),
             Container(
-              height: 115,
+              height: 135,
               width: MediaQuery.of(context).size.width - 150,
               margin: const EdgeInsets.symmetric(horizontal: 15),
               child: Column(
@@ -156,7 +156,7 @@ class CodeItem extends StatelessWidget {
                   Text(
                     code.name,
                     style: const TextStyle(
-                        fontSize: 22, fontWeight: FontWeight.bold),
+                        fontSize: 18, fontWeight: FontWeight.w700),
                   ),
                   Text(code.type.capitalize()),
                   Container(

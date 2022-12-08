@@ -1,7 +1,5 @@
 import 'dart:io';
-
 import 'package:community_material_icon/community_material_icon.dart';
-import 'package:flutter/foundation.dart';
 import "package:flutter/material.dart";
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:qreate/components/hr.dart';
@@ -134,12 +132,12 @@ class _RegisterState extends State<Register> {
         },
         child: Scaffold(
           appBar: AppBar(
-            title: Text("Register"),
+            title: const Text("Register"),
             centerTitle: true,
           ),
           body: SingleChildScrollView(
               child: Container(
-            padding: EdgeInsets.all(25),
+            padding: const EdgeInsets.all(25),
             height: MediaQuery.of(context).size.height - 100,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -149,7 +147,7 @@ class _RegisterState extends State<Register> {
                   key: _form,
                   child: Column(children: [
                     TextFormField(
-                      decoration: InputDecoration(hintText: "Email", errorMaxLines: 3),
+                      decoration: const InputDecoration(hintText: "Email", errorMaxLines: 3),
                       controller: emailController,
                       validator: (text) {
                         final bool emailValid = RegExp(
@@ -160,9 +158,8 @@ class _RegisterState extends State<Register> {
                           return "Please enter your email";
                         } else if (!emailValid) {
                           return "Please enter a valid email";
-                        } else if (emailValid) {
-                          return null;
                         }
+                        return null;
                       },
                     ),
                     TextFormField(
@@ -182,24 +179,23 @@ class _RegisterState extends State<Register> {
                               .hasMatch(passwordController.text);
                           if (!passwordValid) {
                             return "Your password must be at least 8 characters long and include a lowercase, uppercase, number, and special character";
-                          } else if (passwordValid) {
-                            return null;
                           }
                         }
+                        return null;
                       },
                     ),
                     ElevatedButton(
-                        onPressed: createUserWithEmail, child: Text("Register")),
+                        onPressed: createUserWithEmail, child: const Text("Register")),
                     TextButton(
                         onPressed: () {
-                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (t) => Login()));
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (t) => const Login()));
                         },
-                        child: Text("Already have an account? Sign in"))
+                        child: const Text("Already have an account? Sign in"))
                   ]),
                 ),
                 Container(
-                    margin: EdgeInsets.symmetric(vertical: 25),
-                    child: HR(text: "OR")),
+                    margin: const EdgeInsets.symmetric(vertical: 25),
+                    child: const HR(text: "OR")),
                 Column(children: [
                   Platform.isIOS ? SignInButton(Buttons.apple, text: "Sign up with Apple", onPressed: createUserWithApple) : Container(),
                   SignInButton(Buttons.google, text: "Sign up with Google", onPressed: createUserWithGoogle),

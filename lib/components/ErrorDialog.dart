@@ -11,30 +11,30 @@ class ErrorDialog extends StatelessWidget {
         contentPadding: const EdgeInsets.all(0),
         content: Container(
           height: 300,
-          padding: EdgeInsets.symmetric(horizontal: 25),
+          padding: const EdgeInsets.symmetric(horizontal: 25),
           child: Center(
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.start, children: [
               Container(
-                margin: EdgeInsets.symmetric(vertical: 50),
-                child: Text(
+                margin: const EdgeInsets.symmetric(vertical: 50),
+                child: const Text(
                   "Error",
-                  style: const TextStyle(
+                  style: TextStyle(
                       fontSize: 26, fontWeight: FontWeight.bold),
                 ),
               ),
               Text(
                 errorMessage,
-                style: TextStyle(color: Colors.red),
+                style: const TextStyle(color: Colors.red),
                 textAlign: TextAlign.center,
               ),
               Container(
-                margin: EdgeInsets.symmetric(vertical: 25),
+                margin: const EdgeInsets.symmetric(vertical: 25),
                 child: ElevatedButton(
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    child: Text("Close")),
+                    child: const Text("Close")),
               ),
             ]),
           ),

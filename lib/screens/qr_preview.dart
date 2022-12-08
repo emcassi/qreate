@@ -1,13 +1,9 @@
-import 'dart:typed_data';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:community_material_icon/community_material_icon.dart';
 import 'package:contrast_checker/contrast_checker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
-import 'package:gallery_saver/gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -65,14 +61,14 @@ class _QRPreviewState extends State<QRPreview> {
         contentPadding: const EdgeInsets.all(0),
         content: Container(
           height: 300,
-          padding: EdgeInsets.symmetric(horizontal: 25),
+          padding: const EdgeInsets.symmetric(horizontal: 25),
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                    margin: EdgeInsets.only(bottom: 15),
-                    child: Text(
+                    margin: const EdgeInsets.only(bottom: 15),
+                    child: const Text(
                       "You must be signed in to save QR codes.",
                       style: TextStyle(fontSize: 18),
                       textAlign: TextAlign.left,
@@ -81,13 +77,13 @@ class _QRPreviewState extends State<QRPreview> {
                     onPressed: () {
                       Navigator.pop(context);
                       Navigator.push(
-                          context, MaterialPageRoute(builder: (t) => Login()));
+                          context, MaterialPageRoute(builder: (t) => const Login()));
                     },
                     style: ElevatedButton.styleFrom(
-                        minimumSize: Size(150, 50),
+                        minimumSize: const Size(150, 50),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(25))),
-                    child: Text(
+                    child: const Text(
                       "Login",
                       style: TextStyle(fontSize: 24),
                     )),
@@ -98,10 +94,10 @@ class _QRPreviewState extends State<QRPreview> {
                     onPressed: () {
                       Navigator.pop(context);
                       Navigator.push(context,
-                          MaterialPageRoute(builder: (t) => Register()));
+                          MaterialPageRoute(builder: (t) => const Register()));
                     },
                     style: ElevatedButton.styleFrom(
-                        minimumSize: Size(150, 50),
+                        minimumSize: const Size(150, 50),
                         backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(25),
@@ -180,7 +176,7 @@ class _QRPreviewState extends State<QRPreview> {
               await codesDir.create(recursive: true);
             }
             File file = await File("${codesDir.path}/qr.png")
-                .writeAsBytes(List<int>.from(data!));
+                .writeAsBytes(List<int>.from(data));
             return file;
           }
         } else if (await Permission.storage.request().isGranted) {
@@ -191,7 +187,7 @@ class _QRPreviewState extends State<QRPreview> {
             await codesDir.create(recursive: true);
           }
           File file = await File("${codesDir.path}/qr.png")
-              .writeAsBytes(List<int>.from(data!));
+              .writeAsBytes(List<int>.from(data));
           return file;
         }
       }
@@ -223,7 +219,7 @@ class _QRPreviewState extends State<QRPreview> {
             if (imageFile != null) {
               final Reference storageRef = FirebaseStorage.instance.ref(
                   "codes");
-              final String codeId = Uuid().v4();
+              final String codeId = const Uuid().v4();
               final Reference newCodeRef = storageRef.child(codeId);
 
               try {
@@ -256,8 +252,6 @@ class _QRPreviewState extends State<QRPreview> {
         }
       }
     }
-
-    Widget buildImage(Uint8List bytes) => Image.memory(bytes);
 
     return Scaffold(
       // key: qrController.containerKey,

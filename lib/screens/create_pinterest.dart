@@ -2,14 +2,14 @@ import 'package:community_material_icon/community_material_icon.dart';
 import "package:flutter/material.dart";
 import 'package:qreate/screens/qr_preview.dart';
 
-class CreateSnapchat extends StatefulWidget {
-  const CreateSnapchat({Key? key}) : super(key: key);
+class CreatePinterest extends StatefulWidget {
+  const CreatePinterest({Key? key}) : super(key: key);
 
   @override
-  State<CreateSnapchat> createState() => _CreateSnapchatState();
+  State<CreatePinterest> createState() => _CreatePinterestState();
 }
 
-class _CreateSnapchatState extends State<CreateSnapchat> {
+class _CreatePinterestState extends State<CreatePinterest> {
   final _form = GlobalKey<FormState>();
 
   @override
@@ -24,9 +24,9 @@ class _CreateSnapchatState extends State<CreateSnapchat> {
               context,
               MaterialPageRoute(
                   builder: (s) => QRPreview(
-                        value: "https://www.snapchat.com/${controller.text}",
-                        type: "snapchat",
-                    image: Image.asset("assets/images/snapchat.png"),
+                        value: "https://www.pinterest.com/${controller.text}",
+                        type: "pinterest",
+                    image: Image.asset("assets/images/pinterest.png"),
                       )));
         }
       }
@@ -41,7 +41,7 @@ class _CreateSnapchatState extends State<CreateSnapchat> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Create Snapchat QR"),
+          title: const Text("Create Pinterest QR"),
           centerTitle: true,
         ),
         body: Column(
@@ -66,7 +66,7 @@ class _CreateSnapchatState extends State<CreateSnapchat> {
                           return null;
                         },
                         decoration: InputDecoration(
-                            hintText: "Snapchat Username",
+                            hintText: "Pinterest Username",
                             suffixIcon: IconButton(
                                 onPressed: () => {controller.text = ""},
                                 icon: const Icon(
