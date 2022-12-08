@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:gallery_saver/files.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:qreate/models/qr_code.dart';
+import 'package:qreate/other/extensions.dart';
 import 'package:share_plus/share_plus.dart';
 
 class CodeItem extends StatelessWidget {
@@ -73,20 +74,24 @@ class CodeItem extends StatelessWidget {
           context: context,
           builder: (t) => AlertDialog(
                 content: SizedBox(
-                  height: 100,
+                  height: 125,
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       const Text(
                         "Delete?",
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 24),
                       ),
-                      const Text(
-                        "Are you sure you want to delete this code?",
-                        style: TextStyle(fontSize: 14),
+                      Container(
+                        margin: const EdgeInsets.symmetric(vertical: 10),
+                        child: const Text(
+                          "Are you sure you want to delete this QR code?",
+                          style: TextStyle(fontSize: 14),
+                        ),
                       ),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
@@ -97,6 +102,7 @@ class CodeItem extends StatelessWidget {
                                   .collection("codes")
                                   .doc(code.id)
                                   .delete();
+                              Navigator.pop(context);
                               getCodes();
                             },
                             child: const Text("Yes",
@@ -152,7 +158,7 @@ class CodeItem extends StatelessWidget {
                     style: const TextStyle(
                         fontSize: 22, fontWeight: FontWeight.bold),
                   ),
-                  Text(code.type),
+                  Text(code.type.capitalize()),
                   Container(
                       margin: const EdgeInsets.only(top: 10),
                       child: Row(

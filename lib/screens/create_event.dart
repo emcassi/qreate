@@ -105,7 +105,8 @@ class _CreateEventState extends State<CreateEvent> {
                           margin: const EdgeInsets.symmetric(vertical: 15),
                           child: TextFormField(
                               controller: nameController,
-                              keyboardType: TextInputType.emailAddress,
+                              keyboardType: TextInputType.text,
+                              textCapitalization: TextCapitalization.sentences,
                               textInputAction: TextInputAction.next,
                               validator: (text) {
                                 if (text != null) {

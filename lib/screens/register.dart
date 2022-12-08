@@ -189,7 +189,7 @@ class _RegisterState extends State<Register> {
                       },
                     ),
                     ElevatedButton(
-                        onPressed: createUserWithEmail, child: Text("Login")),
+                        onPressed: createUserWithEmail, child: Text("Register")),
                     TextButton(
                         onPressed: () {
                           Navigator.pushReplacement(context, MaterialPageRoute(builder: (t) => Login()));

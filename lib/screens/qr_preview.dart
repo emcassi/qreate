@@ -341,7 +341,7 @@ class _QRPreviewState extends State<QRPreview> {
                     )
                   ],
                 ),
-                Row(
+                widget.image == null ? Container() : Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     const SizedBox(
