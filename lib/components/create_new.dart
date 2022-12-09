@@ -15,7 +15,6 @@ import 'package:qreate/screens/create_url.dart';
 import 'package:qreate/screens/create_text.dart';
 import 'package:qreate/screens/create_wifi.dart';
 import 'package:qreate/screens/create_youtube.dart';
-import 'package:simple_icons/simple_icons.dart';
 
 class CreateNew extends StatelessWidget {
   const CreateNew({Key? key}) : super(key: key);

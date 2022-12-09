@@ -15,11 +15,11 @@ class _CreateSMSState extends State<CreateSMS> {
   final _form = GlobalKey<FormState>();
 
   String initialCountry = "US";
+    final TextEditingController numberController = TextEditingController();
+    final TextEditingController messageController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController numberController = TextEditingController();
-    final TextEditingController messageController = TextEditingController();
 
     PhoneNumber phoneNumber = PhoneNumber(isoCode: initialCountry);
 
@@ -45,8 +45,8 @@ class _CreateSMSState extends State<CreateSMS> {
       onTap: () {
         FocusScopeNode currentFocus = FocusScope.of(context);
         if (!currentFocus.hasPrimaryFocus) {
-          // currentFocus.unfocus();
-          SystemChannels.textInput.invokeMethod('TextInput.hide');
+          currentFocus.unfocus();
+          // SystemChannels.textInput.invokeMethod('TextInput.hide');
         }
       },
       child: Scaffold(
@@ -55,11 +55,11 @@ class _CreateSMSState extends State<CreateSMS> {
           centerTitle: true,
         ),
         body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
                 margin:
-                    const EdgeInsets.symmetric(horizontal: 25, vertical: 50),
+                    const EdgeInsets.symmetric(horizontal: 25, vertical: 0),
                 child: Form(
                     key: _form,
                     child: Column(
@@ -75,7 +75,7 @@ class _CreateSMSState extends State<CreateSMS> {
                         )),
                         TextFormField(
                             controller: messageController,
-                            keyboardType: TextInputType.text,
+                            keyboardType: TextInputType.multiline,
                             textCapitalization: TextCapitalization.sentences,
                             validator: (text) {
                               if (text != null) {

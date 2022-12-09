@@ -11,10 +11,10 @@ class CreatePinterest extends StatefulWidget {
 
 class _CreatePinterestState extends State<CreatePinterest> {
   final _form = GlobalKey<FormState>();
+    final TextEditingController controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController controller = TextEditingController();
 
     void createQR() {
       if (_form.currentState != null) {

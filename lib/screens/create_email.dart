@@ -12,12 +12,12 @@ class CreateEmail extends StatefulWidget {
 
 class _CreateEmailState extends State<CreateEmail> {
   final _form = GlobalKey<FormState>();
-
-  @override
-  Widget build(BuildContext context) {
     final TextEditingController recipientController = TextEditingController();
     final TextEditingController subjectController = TextEditingController();
     final TextEditingController messageController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
 
     void createQR() {
       if (_form.currentState != null) {

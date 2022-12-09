@@ -11,10 +11,10 @@ class CreateTwitch extends StatefulWidget {
 
 class _CreateTwitchState extends State<CreateTwitch> {
   final _form = GlobalKey<FormState>();
+    final TextEditingController controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController controller = TextEditingController();
 
     void createQR() {
       if (_form.currentState != null) {
