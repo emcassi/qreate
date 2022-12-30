@@ -73,7 +73,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-<img src="https://i.imgur.com/rWGqKAm.png" alt="Screenshot">
+<img src="https://i.imgur.com/rWGqKAm.png" alt="Screenshot" width="250">
 
 
 
