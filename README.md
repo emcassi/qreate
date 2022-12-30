@@ -40,6 +40,8 @@
   </p>
 </div>
 
+ * [Download from the App Store](https://apps.apple.com/app/id1658696194).
+ * [Download from Google Play](https://play.google.com/store/apps/details?id=org.alexwayne.qreate&pli=1).
 
 
 <!-- TABLE OF CONTENTS -->
@@ -59,10 +61,7 @@
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
     <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
