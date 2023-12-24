@@ -28,7 +28,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/emcassi/qreate-flutter">
+  <a href="https://github.com/emcassi/qreate">
     <img src="https://i.imgur.com/YRlgGD9.png" alt="Logo" width="80" height="80">
   </a>
 
@@ -101,7 +101,7 @@ This is an example of how to list things you need to use the software and how to
 
 1. Clone the repo
    ```sh
-   git clone https://github.com/emcassi/qreate-flutter.git
+   git clone https://github.com/emcassi/qreate.git
    ```
 2. Run the project
    ```sh
@@ -134,7 +134,7 @@ This is an example of how to list things you need to use the software and how to
 - [X] Save QR Codes
 - [X] Share QR Codes
 
-See the [open issues](https://github.com/emcassi/qreate-flutter/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/emcassi/qreate/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -144,7 +144,7 @@ See the [open issues](https://github.com/emcassi/qreate-flutter/issues) for a fu
 
 Alex Wayne - [@emcassi_](https://twitter.com/emcassi_) - alex.wayne.dev@gmail.com
 
-Project Link: [https://github.com/emcassi/qreate-flutter](https://github.com/emcassi/qreate-flutter)
+Project Link: [https://github.com/emcassi/qreate](https://github.com/emcassi/qreate)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -166,16 +166,16 @@ Special acknowledgement to these packages, they made development much easier
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/emcassi/qreate-flutter.svg?style=for-the-badge
-[contributors-url]: https://github.com/emcassi/qreate-flutter/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/emcassi/qreate-flutter.svg?style=for-the-badge
-[forks-url]: https://github.com/emcassi/qreate-flutter/network/members
-[stars-shield]: https://img.shields.io/github/stars/emcassi/qreate-flutter.svg?style=for-the-badge
-[stars-url]: https://github.com/emcassi/qreate-flutter/stargazers
-[issues-shield]: https://img.shields.io/github/issues/emcassi/qreate-flutter.svg?style=for-the-badge
-[issues-url]: https://github.com/emcassi/qreate-flutter/issues
-[license-shield]: https://img.shields.io/github/license/emcassi/qreate-flutter.svg?style=for-the-badge
-[license-url]: https://github.com/emcassi/qreate-flutter/blob/master/LICENSE.txt
+[contributors-shield]: https://img.shields.io/github/contributors/emcassi/qreate.svg?style=for-the-badge
+[contributors-url]: https://github.com/emcassi/qreate/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/emcassi/qreate.svg?style=for-the-badge
+[forks-url]: https://github.com/emcassi/qreate/network/members
+[stars-shield]: https://img.shields.io/github/stars/emcassi/qreate.svg?style=for-the-badge
+[stars-url]: https://github.com/emcassi/qreate/stargazers
+[issues-shield]: https://img.shields.io/github/issues/emcassi/qreate.svg?style=for-the-badge
+[issues-url]: https://github.com/emcassi/qreate/issues
+[license-shield]: https://img.shields.io/github/license/emcassi/qreate.svg?style=for-the-badge
+[license-url]: https://github.com/emcassi/qreate/blob/master/LICENSE.txt
 [product-screenshot]: images/screenshot.png
 [Flutter]: https://img.shields.io/badge/Flutter-20232A?style=for-the-badge&logo=flutter&logoColor=61DAFB
 [Flutter-url]: https://flutter.dev/
